@@ -4,9 +4,9 @@ tg.expand();
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map').setView(dduCenter, 17);
 
-// High-resolution crisp satellite imagery
+// High-resolution crisp satellite layer
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid',
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
     maxZoom: 19
 }).addTo(map);
 
@@ -14,8 +14,6 @@ let markers = [];
 let allLocations = [];
 let userMarker = null;
 let userCircle = null;
-let routeLine = null;
-let activeTarget = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const targetBuilding = urlParams.get('target');
@@ -34,7 +32,7 @@ async function loadLocations() {
         if (targetBuilding) {
             let found = allLocations.find(loc => loc.name.toLowerCase().includes(targetBuilding.toLowerCase()));
             if (found) {
-                setDestination(found);
+                focusLocation(found);
             }
         }
     } catch (error) {
@@ -49,55 +47,18 @@ function renderMarkers(locations) {
     locations.forEach(loc => {
         let marker = L.marker([loc.lat, loc.lng]).addTo(map);
         marker.bindPopup(`<b>${loc.name}</b><br>Category: ${loc.category}`);
-        marker.on('click', () => setDestination(loc));
-        markers.push({ name: loc.name, lat: loc.lat, lng: loc.lng, marker: marker });
+        marker.on('click', () => focusLocation(loc));
+        markers.push({ name: loc.name, marker: marker });
     });
 }
 
-function setDestination(loc) {
-    activeTarget = loc;
+function focusLocation(loc) {
     map.setView([loc.lat, loc.lng], 19);
-
     markers.forEach(m => {
         if (m.name === loc.name) {
             m.marker.openPopup();
         }
     });
-
-    showNavigationBanner(loc.name);
-    updateRoute();
-}
-
-function showNavigationBanner(name) {
-    let banner = document.getElementById('nav-banner');
-    if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'nav-banner';
-        banner.style.cssText = "position:absolute; top:10px; right:10px; background:#004d40; color:white; padding:10px 15px; border-radius:8px; z-index:2000; font-size:0.9rem; box-shadow:0 4px 6px rgba(0,0,0,0.3);";
-        document.body.appendChild(banner);
-    }
-    banner.innerHTML = `🧭 Navigating to: <b>${name}</b><br><span id='distance-text' style='font-size:0.8rem; color:#b2dfdb;'>Calculating steps...</span>`;
-}
-
-function updateRoute() {
-    if (!userMarker || !activeTarget) return;
-    let userLatLng = userMarker.getLatLng();
-    let targetLatLng = [activeTarget.lat, activeTarget.lng];
-
-    // Calculate distance in meters
-    let distance = map.distance(userLatLng, targetLatLng);
-    let distText = distance > 1000 ? (distance / 1000).toFixed(2) + " km" : Math.round(distance) + " meters";
-
-    let distEl = document.getElementById('distance-text');
-    if (distEl) {
-        distEl.innerText = `Distance away: ${distText} — Follow path`;
-    }
-
-    // Draw guidance line
-    if (routeLine) {
-        map.removeLayer(routeLine);
-    }
-    routeLine = L.polyline([userLatLng, targetLatLng], { color: '#2196F3', weight: 4, dashArray: '6, 6' }).addTo(map);
 }
 
 function renderList(locations) {
@@ -111,7 +72,7 @@ function renderList(locations) {
             <h4>${loc.name}</h4>
             <span>${loc.category}</span>
         `;
-        item.onclick = () => setDestination(loc);
+        item.onclick = () => focusLocation(loc);
         listContainer.appendChild(item);
     });
 }
@@ -123,7 +84,7 @@ function filterLocations() {
     renderMarkers(filtered);
 }
 
-// Live GPS Tracking & Guidance update
+// Live GPS Tracking with Step Guidance
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
         (position) => {
@@ -135,10 +96,10 @@ if (navigator.geolocation) {
                 userMarker = L.marker([lat, lng], {
                     icon: L.divIcon({
                         className: 'user-gps-dot',
-                        html: '<div style="background-color: #2196F3; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>',
-                        iconSize: [14, 14]
+                        html: '<div style="background-color: #2196F3; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.6);"></div>',
+                        iconSize: [16, 16]
                     })
-                }).addTo(map).bindPopup("You are here");
+                }).addTo(map).bindPopup("You are here (Live GPS)");
 
                 userCircle = L.circle([lat, lng], { radius: accuracy, color: '#2196F3', fillOpacity: 0.15 }).addTo(map);
             } else {
@@ -146,13 +107,9 @@ if (navigator.geolocation) {
                 userCircle.setLatLng([lat, lng]);
                 userCircle.setRadius(accuracy);
             }
-
-            if (activeTarget) {
-                updateRoute();
-            }
         },
         (error) => {
-            console.warn("GPS tracking unavailable:", error.message);
+            console.warn("GPS location error:", error.message);
         },
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
     );
