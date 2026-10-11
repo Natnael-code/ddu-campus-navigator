@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDU Campus Navigator</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar with building search & list -->
+        <div class="sidebar">
+            <div class="header">
+                <h2>🏫 DDU Campus Guide</h2>
+                <p>Find blocks, dorms & landmarks</p>
+                <input type="text" id="search-box" placeholder="Search building or block..."
+                    onkeyup="filterLocations()">
+            </div>
+            <div id="building-list" class="building-list">
+                <!-- Populated dynamically via app.js -->
+            </div>
+        </div>
+
+        <!-- Map View -->
+        <div id="map"></div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
