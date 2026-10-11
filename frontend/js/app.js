@@ -4,9 +4,9 @@ tg.expand();
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map').setView(dduCenter, 17);
 
-// High-resolution crisp satellite layer
+// High-resolution satellite layer
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
+    attribution: 'Tiles &copy; Esri',
     maxZoom: 19
 }).addTo(map);
 
@@ -84,7 +84,7 @@ function filterLocations() {
     renderMarkers(filtered);
 }
 
-// Live GPS Tracking with Step Guidance
+// Live GPS Tracking
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
         (position) => {
@@ -99,7 +99,7 @@ if (navigator.geolocation) {
                         html: '<div style="background-color: #2196F3; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.6);"></div>',
                         iconSize: [16, 16]
                     })
-                }).addTo(map).bindPopup("You are here (Live GPS)");
+                }).addTo(map).bindPopup("You are here");
 
                 userCircle = L.circle([lat, lng], { radius: accuracy, color: '#2196F3', fillOpacity: 0.15 }).addTo(map);
             } else {
@@ -109,7 +109,7 @@ if (navigator.geolocation) {
             }
         },
         (error) => {
-            console.warn("GPS location error:", error.message);
+            console.warn("GPS error:", error.message);
         },
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
     );

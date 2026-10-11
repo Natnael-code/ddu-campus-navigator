@@ -22,8 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "locations.json")
-FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
+# Paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(BASE_DIR, "data", "locations.json")
+FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
 
 def load_locations():
     if not os.path.exists(DATA_PATH):
@@ -35,6 +37,7 @@ def load_locations():
 def get_locations():
     return load_locations()
 
+# Serve Frontend Static Files safely
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -44,19 +47,20 @@ if os.path.exists(FRONTEND_DIR):
     def serve_index():
         return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
+# Replace with your actual live Render URL
 LIVE_URL = "https://telegram-route-app.onrender.com/index.html"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     locations = load_locations()
     
-    # Build keyboard with Mini App launcher + top popular locations
+    # Main button to open full map
     keyboard = [
-        [InlineKeyboardButton("🗺️ Open Full Satellite Mini App", web_app=WebAppInfo(url=LIVE_URL))]
+        [InlineKeyboardButton("🗺️ Open Full Satellite Map & Search All", web_app=WebAppInfo(url=LIVE_URL))]
     ]
     
-    # Add buttons for key locations dynamically from JSON
-    for loc in locations[:8]:  # Show top 8 quick buttons
+    # Add a button for EVERY location so students can click any block/dorm directly
+    for loc in locations:
         keyboard.append([InlineKeyboardButton(f"📍 {loc['name']} ({loc['category']})", callback_data=f"nav_{loc['name']}")])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -64,10 +68,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_message = (
         f"👋 Hello {user.first_name}!\n\n"
         f"Welcome to the **DDU Live Campus Navigator**. "
-        f"Select a destination below or open the full satellite map to search all blocks and dorms!"
+        f"Choose any block, dorm, or building below to start live GPS navigation, or open the full map!"
     )
     
-    await update.message.reply_text(welcome_message, reply_markup=reply_markup, parse_mode="Markdown")
+    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -81,13 +85,13 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if match:
             target_url = f"{LIVE_URL}?target={match['name']}"
-            keyboard = [[InlineKeyboardButton(f"🧭 Start Live Navigation to {match['name']}", web_app=WebAppInfo(url=target_url))]]
+            keyboard = [[InlineKeyboardButton(f"🧭 Start Navigation to {match['name']}", web_app=WebAppInfo(url=target_url))]]
             reply_markup = InlineKeyboardMarkup(keyboard)
 
             await query.message.reply_text(
-                f"🎯 **Destination Selected:** `{match['name']}`\n"
+                f"🎯 **Destination:** `{match['name']}`\n"
                 f"Category: `{match['category']}`\n\n"
-                f"Click below to launch live GPS guidance straight to this location!",
+                f"Click below to launch live GPS guidance!",
                 reply_markup=reply_markup,
                 parse_mode="Markdown"
             )
@@ -101,3 +105,4 @@ async def startup_event():
         await application.initialize()
         await application.start()
         asyncio.create_task(application.updater.start_polling())
+        print("🤖 Telegram Bot polling started successfully!")
