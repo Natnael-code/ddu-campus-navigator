@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -23,7 +23,6 @@ app.add_middleware(
 )
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "locations.json")
-# Point to your frontend folder relative to backend/main.py
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 def load_locations():
@@ -36,7 +35,6 @@ def load_locations():
 def get_locations():
     return load_locations()
 
-# Serve frontend static files so your mini-app loads directly from Render
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -46,64 +44,39 @@ if os.path.exists(FRONTEND_DIR):
     def serve_index():
         return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 
-# --- TELEGRAM BOT LOGIC ---
-LIVE_URL = "https://ddu-campus-navigator.onrender.com/index.html"
+LIVE_URL = "https://trainer-track-ai.onrender.com/index.html"  # Update with your render URL if needed
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    locations = load_locations()
     
     keyboard = [
-        [InlineKeyboardButton("🗺️ Open Full Campus Map & Mini App", web_app=WebAppInfo(url=LIVE_URL))],
-        [InlineKeyboardButton("💻 School of Computing (Block 15)", callback_data="nav_Block-15 (School of Computing)"),
-         InlineKeyboardButton("📚 Main Library", callback_data="nav_Main Library")],
-        [InlineKeyboardButton("🏠 White House Dorms", callback_data="nav_White House-A"),
-         InlineKeyboardButton("🏥 Hospital", callback_data="nav_Hospital")],
-        [InlineKeyboardButton("🚪 Mermersa Gate", callback_data="nav_Mermersa Gate")]
+        [InlineKeyboardButton("🗺️ Open Full Satellite Map & Mini App", web_app=WebAppInfo(url=LIVE_URL))]
     ]
+    
+    # Dynamically add top locations/dorms as buttons
+    for loc in locations[:12]:  # Show top available locations
+        target_url = f"{LIVE_URL}?target={loc['name']}"
+        keyboard.append([InlineKeyboardButton(f"📍 {loc['name']} ({loc['category']})", web_app=WebAppInfo(url=target_url))])
+
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_message = (
         f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the **Dire Dawa University Navigator Bot**. "
-        f"Designed especially for freshmen and visitors to find blocks, dorms, and cafes easily.\n\n"
-        f"Click a quick destination below or open the full satellite map!"
+        f"Welcome to the **DDU Campus Navigator**. "
+        f"Find dorms, blocks, and get live step-by-step GPS navigation across campus.\n\n"
+        f"Select a destination below or open the full map:"
     )
     
     await update.message.reply_text(welcome_message, reply_markup=reply_markup, parse_mode="Markdown")
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    data = query.data
-    if data.startswith("nav_"):
-        building_name = data.replace("nav_", "")
-        locations = load_locations()
-        match = next((loc for loc in locations if loc["name"].lower() == building_name.lower()), None)
-
-        if match:
-            target_url = f"{LIVE_URL}?target={match['name']}"
-            keyboard = [[InlineKeyboardButton(f"🧭 Navigate to {match['name']}", web_app=WebAppInfo(url=target_url))]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
-            await query.message.reply_text(
-                f"📍 **{match['name']}**\n"
-                f"Category: `{match['category']}`\n\n"
-                f"Click below to launch the live GPS tracker map directly to this building!",
-                reply_markup=reply_markup,
-                parse_mode="Markdown"
-            )
-
-# Startup event to run the Telegram bot polling alongside FastAPI
 @app.on_event("startup")
 async def startup_event():
     if TOKEN:
         application = ApplicationBuilder().token(TOKEN).build()
         application.add_handler(CommandHandler("start", start))
-        application.add_handler(CallbackQueryHandler(button_handler))
         
-        # Initialize and start polling in the background
         await application.initialize()
         await application.start()
         asyncio.create_task(application.updater.start_polling())
-        print("🤖 Telegram Bot polling started successfully in background!")
+        print("🤖 Telegram Bot running with dynamic location buttons!")
