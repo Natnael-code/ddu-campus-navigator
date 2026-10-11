@@ -1,12 +1,9 @@
-// Initialize Telegram WebApp API
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-// Center map on Dire Dawa University
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map').setView(dduCenter, 17);
 
-// Add crisp satellite layer (Esri World Imagery)
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP',
     maxZoom: 19
@@ -17,19 +14,21 @@ let allLocations = [];
 let userMarker = null;
 let userCircle = null;
 
-// Check URL parameters if a target was passed from the Telegram Bot button
 const urlParams = new URLSearchParams(window.location.search);
 const targetBuilding = urlParams.get('target');
 
-// Fetch locations from FastAPI backend
+// Automatically switch between local development and live server URL
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:8000/api/locations'
+    : '/api/locations';
+
 async function loadLocations() {
     try {
-        let response = await fetch('http://127.0.0.1:8000/api/locations');
+        let response = await fetch(API_URL);
         allLocations = await response.json();
         renderList(allLocations);
         renderMarkers(allLocations);
 
-        // If user came from a specific bot button, focus that building
         if (targetBuilding) {
             let found = allLocations.find(loc => loc.name.toLowerCase().includes(targetBuilding.toLowerCase()));
             if (found) {
@@ -48,11 +47,7 @@ function renderMarkers(locations) {
     locations.forEach(loc => {
         let marker = L.marker([loc.lat, loc.lng]).addTo(map);
         marker.bindPopup(`<b>${loc.name}</b><br>Category: ${loc.category}`);
-
-        marker.on('click', () => {
-            focusLocation(loc);
-        });
-
+        marker.on('click', () => focusLocation(loc));
         markers.push({ name: loc.name, marker: marker });
     });
 }
@@ -77,7 +72,6 @@ function renderList(locations) {
             <h4>${loc.name}</h4>
             <span>${loc.category}</span>
         `;
-
         item.onclick = () => focusLocation(loc);
         listContainer.appendChild(item);
     });
@@ -90,7 +84,6 @@ function filterLocations() {
     renderMarkers(filtered);
 }
 
-// Live GPS Navigation Tracking
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
         (position) => {
