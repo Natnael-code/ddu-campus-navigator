@@ -37,6 +37,10 @@ def load_locations():
 def get_locations():
     return load_locations()
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -53,9 +57,7 @@ LIVE_URL = "https://telegram-route-app.onrender.com/index.html"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    locations = load_locations()
     
-    # Create quick reply buttons for popular destinations (School of Computing, Library, Hospital, Gates, etc.)
     keyboard = [
         [
             KeyboardButton("💻 Block-15 (Computing) - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Block-15 (School of Computing)&start=gps")),
@@ -85,8 +87,13 @@ async def startup_event():
     if TOKEN:
         request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
         application = Application.builder().token(TOKEN).request(request).build()
+        
+        # Clear any stuck webhooks so polling works reliably
+        await application.bot.delete_webhook(drop_pending_updates=True)
+        
         application.add_handler(CommandHandler("start", start))
         await application.initialize()
         await application.start()
+        
         asyncio.create_task(application.updater.start_polling(drop_pending_updates=True))
-        print("🤖 Telegram Bot & FastAPI started successfully!")
+        print("🤖 Telegram Bot webhook cleared and polling started successfully!")
