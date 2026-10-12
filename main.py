@@ -23,8 +23,9 @@ app.add_middleware(
 )
 
 # Paths from the root directory
+# Paths from the root directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "data", "locations.json")
+DATA_PATH = os.path.join(BASE_DIR, "backend", "data", "locations.json")  # <-- Updated to point into backend/data/
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 def load_locations():
