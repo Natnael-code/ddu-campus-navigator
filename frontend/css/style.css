@@ -19,7 +19,7 @@ html {
 }
 
 .sidebar {
-    width: 340px;
+    width: 320px;
     height: 100%;
     background: #ffffff;
     display: flex;
@@ -35,12 +35,12 @@ html {
 }
 
 .header h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 4px;
 }
 
 .header p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #b2dfdb;
     margin-bottom: 10px;
 }
@@ -76,12 +76,12 @@ html {
 }
 
 .building-item h4 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #333;
 }
 
 .building-item span {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #00796b;
     font-weight: bold;
     text-transform: uppercase;
@@ -92,7 +92,60 @@ html {
     height: 100%;
 }
 
-/* Responsive layout for mobile / Telegram web view */
+/* Status Banner Overlay */
+#status-banner {
+    position: absolute;
+    top: 12px;
+    left: 55%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.92);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    max-width: 340px;
+}
+
+/* Permanent landmark badge styles */
+.landmark-label {
+    background-color: #0f172a;
+    color: #ffffff;
+    border: 1px solid #38bdf8;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: bold;
+    font-size: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Pulsing user GPS icon */
+.user-position-icon {
+    width: 18px;
+    height: 18px;
+    background-color: #2563eb;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(37, 99, 235, 0.9);
+}
+
+.leaflet-routing-container {
+    background: rgba(15, 23, 42, 0.9) !important;
+    color: #ffffff !important;
+    border-radius: 12px;
+    max-height: 160px;
+    overflow-y: auto;
+    font-size: 11px;
+}
+
+.leaflet-routing-alt {
+    color: #ffffff !important;
+}
+
 @media (max-width: 768px) {
     .app-container {
         flex-direction: column-reverse;
@@ -100,10 +153,16 @@ html {
 
     .sidebar {
         width: 100%;
-        height: 45vh;
+        height: 40vh;
     }
 
     #map {
-        height: 55vh;
+        height: 60vh;
+    }
+
+    #status-banner {
+        left: 50%;
+        top: 8px;
+        width: 90%;
     }
 }

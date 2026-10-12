@@ -6,13 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
+from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.request import HTTPXRequest
 
 load_dotenv()
-TOKEN = os.getenv("TELEGRAM_TOKEN")
+TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
-app = FastAPI(title="DDU Campus Navigator API")
+app = FastAPI(title="DDU Campus Live Navigator API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,10 +23,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Paths from the root directory
-# Paths from the root directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_PATH = os.path.join(BASE_DIR, "backend", "data", "locations.json")  # <-- Updated to point into backend/data/
+DATA_PATH = os.path.join(BASE_DIR, "backend", "data", "locations.json")
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 def load_locations():
@@ -38,7 +37,6 @@ def load_locations():
 def get_locations():
     return load_locations()
 
-# Mount frontend files safely from root
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -55,16 +53,29 @@ LIVE_URL = "https://telegram-route-app.onrender.com/index.html"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    locations = load_locations()
     
+    # Create quick reply buttons for popular destinations (School of Computing, Library, Hospital, Gates, etc.)
     keyboard = [
-        [InlineKeyboardButton("🗺️ Open Live DDU Campus Map & Mini App", web_app=WebAppInfo(url=LIVE_URL))]
+        [
+            KeyboardButton("💻 Block-15 (Computing) - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Block-15 (School of Computing)&start=gps")),
+            KeyboardButton("📚 Main Library - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Main Library&start=gps"))
+        ],
+        [
+            KeyboardButton("🏥 Hospital - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Hospital&start=gps")),
+            KeyboardButton("🚪 Mermersa Gate - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Mermersa Gate&start=gps"))
+        ],
+        [
+            KeyboardButton("🗺️ Open Full Map & Search All Buildings", web_app=WebAppInfo(url=LIVE_URL))
+        ]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
     
     welcome_message = (
         f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the **DDU Live Campus Navigator**.\n"
-        f"Click the button below to open the interactive satellite map and view all campus blocks and dorms!"
+        f"Welcome to the **DDU Live Campus Navigator** 🏫\n"
+        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
     )
     
     await update.message.reply_text(welcome_message, reply_markup=reply_markup)
@@ -72,8 +83,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 @app.on_event("startup")
 async def startup_event():
     if TOKEN:
-        application = ApplicationBuilder().token(TOKEN).build()
+        request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
+        application = Application.builder().token(TOKEN).request(request).build()
         application.add_handler(CommandHandler("start", start))
         await application.initialize()
         await application.start()
-        asyncio.create_task(application.updater.start_polling())
+        asyncio.create_task(application.updater.start_polling(drop_pending_updates=True))
+        print("🤖 Telegram Bot & FastAPI started successfully!")

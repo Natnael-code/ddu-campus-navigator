@@ -1,22 +1,30 @@
 let tg = window.Telegram.WebApp;
 tg.expand();
 
-const dduCenter = [9.6200, 41.8405];
-const map = L.map('map').setView(dduCenter, 17);
+const statusBanner = document.getElementById('status-banner');
 
-// High-resolution crisp satellite layer
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles &copy; Esri',
-    maxZoom: 19
+function getURLParam(key) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(key);
+}
+
+const requestedDest = getURLParam('dest') || 'Block-15 (School of Computing)';
+
+const dduCenter = [9.6200, 41.8405];
+const map = L.map('map', { zoomControl: true }).setView(dduCenter, 17);
+
+// Google Hybrid Satellite Layer
+const googleHybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    maxZoom: 20,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: 'Google Satellite'
 }).addTo(map);
 
 let markers = [];
 let allLocations = [];
 let userMarker = null;
-let userCircle = null;
-
-const urlParams = new URLSearchParams(window.location.search);
-const targetBuilding = urlParams.get('target');
+let routingControl = null;
+let currentDestination = null;
 
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:8000/api/locations'
@@ -29,35 +37,30 @@ async function loadLocations() {
         renderList(allLocations);
         renderMarkers(allLocations);
 
-        if (targetBuilding) {
-            let found = allLocations.find(loc => loc.name.toLowerCase().includes(targetBuilding.toLowerCase()));
-            if (found) {
-                focusLocation(found);
-            }
+        // Find initial destination
+        let target = allLocations.find(loc => loc.name.toLowerCase().includes(requestedDest.toLowerCase())) || allLocations[0];
+        if (target) {
+            setDestination(target);
         }
     } catch (error) {
         console.error("Error loading locations:", error);
+        statusBanner.innerText = "⚠️ Failed to load campus locations.";
     }
 }
 
 function renderMarkers(locations) {
-    markers.forEach(m => map.removeLayer(m));
+    markers.forEach(m => map.removeLayer(m.marker));
     markers = [];
 
     locations.forEach(loc => {
         let marker = L.marker([loc.lat, loc.lng]).addTo(map);
-        marker.bindPopup(`<b>${loc.name}</b><br>Category: ${loc.category}`);
-        marker.on('click', () => focusLocation(loc));
-        markers.push({ name: loc.name, marker: marker });
-    });
-}
-
-function focusLocation(loc) {
-    map.setView([loc.lat, loc.lng], 19);
-    markers.forEach(m => {
-        if (m.name === loc.name) {
-            m.marker.openPopup();
-        }
+        marker.bindTooltip(`📍 ${loc.name}`, {
+            permanent: true,
+            direction: 'top',
+            className: 'landmark-label'
+        });
+        marker.on('click', () => setDestination(loc));
+        markers.push({ name: loc.name, marker: marker, loc: loc });
     });
 }
 
@@ -72,7 +75,7 @@ function renderList(locations) {
             <h4>${loc.name}</h4>
             <span>${loc.category}</span>
         `;
-        item.onclick = () => focusLocation(loc);
+        item.onclick = () => setDestination(loc);
         listContainer.appendChild(item);
     });
 }
@@ -81,7 +84,53 @@ function filterLocations() {
     let query = document.getElementById('search-box').value.toLowerCase();
     let filtered = allLocations.filter(loc => loc.name.toLowerCase().includes(query) || loc.category.toLowerCase().includes(query));
     renderList(filtered);
-    renderMarkers(filtered);
+}
+
+function setDestination(loc) {
+    currentDestination = loc;
+    statusBanner.innerText = `🎯 Navigating to ${loc.name}`;
+
+    if (userMarker) {
+        updateRoute(userMarker.getLatLng(), [loc.lat, loc.lng]);
+    } else {
+        map.setView([loc.lat, loc.lng], 18);
+    }
+}
+
+const userLiveIcon = L.divIcon({
+    className: 'user-position-icon',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9]
+});
+
+function updateRoute(startLatLng, destCoords) {
+    if (!currentDestination) return;
+
+    if (!routingControl) {
+        routingControl = L.Routing.control({
+            waypoints: [
+                L.latLng(startLatLng.lat, startLatLng.lng),
+                L.latLng(destCoords[0], destCoords[1])
+            ],
+            router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: 'foot'
+            }),
+            routeWhileDragging: false,
+            addWaypoints: false,
+            draggableWaypoints: false,
+            showAlternatives: false,
+            collapsible: true,
+            lineOptions: {
+                styles: [{ color: '#38bdf8', opacity: 0.9, weight: 6 }]
+            }
+        }).addTo(map);
+    } else {
+        routingControl.setWaypoints([
+            L.latLng(startLatLng.lat, startLatLng.lng),
+            L.latLng(destCoords[0], destCoords[1])
+        ]);
+    }
 }
 
 // Live GPS Tracking
@@ -90,26 +139,23 @@ if (navigator.geolocation) {
         (position) => {
             let lat = position.coords.latitude;
             let lng = position.coords.longitude;
-            let accuracy = position.coords.accuracy;
+            let latLng = L.latLng(lat, lng);
 
             if (!userMarker) {
-                userMarker = L.marker([lat, lng], {
-                    icon: L.divIcon({
-                        className: 'user-gps-dot',
-                        html: '<div style="background-color: #2196F3; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.6);"></div>',
-                        iconSize: [16, 16]
-                    })
-                }).addTo(map).bindPopup("You are here");
-
-                userCircle = L.circle([lat, lng], { radius: accuracy, color: '#2196F3', fillOpacity: 0.15 }).addTo(map);
+                userMarker = L.marker(latLng, { icon: userLiveIcon })
+                    .addTo(map)
+                    .bindPopup("<b>📱 You are here</b>");
             } else {
-                userMarker.setLatLng([lat, lng]);
-                userCircle.setLatLng([lat, lng]);
-                userCircle.setRadius(accuracy);
+                userMarker.setLatLng(latLng);
+            }
+
+            if (currentDestination) {
+                updateRoute(latLng, [currentDestination.lat, currentDestination.lng]);
             }
         },
         (error) => {
             console.warn("GPS error:", error.message);
+            statusBanner.innerText = "⚠️ GPS signal unavailable. Tap any building to view.";
         },
         { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
     );
