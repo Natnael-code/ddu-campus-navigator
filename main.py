@@ -22,11 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Absolute path resolution for Render deployment
+# Paths from the root directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(BASE_DIR)
 DATA_PATH = os.path.join(BASE_DIR, "data", "locations.json")
-FRONTEND_DIR = os.path.join(ROOT_DIR, "frontend")
+FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 
 def load_locations():
     if not os.path.exists(DATA_PATH):
@@ -38,7 +37,7 @@ def load_locations():
 def get_locations():
     return load_locations()
 
-# Serve static assets and index.html safely
+# Mount frontend files safely from root
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -49,7 +48,7 @@ def serve_index():
     index_file = os.path.join(FRONTEND_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
-    return {"error": "index.html not found", "path": index_file}, 404
+    return {"error": "index.html not found"}, 404
 
 LIVE_URL = "https://telegram-route-app.onrender.com/index.html"
 
