@@ -8,7 +8,7 @@ function getURLParam(key) {
     return params.get(key);
 }
 
-const requestedDest = getURLParam('dest') || 'Block-15 (School of Computing)';
+const requestedDest = getURLParam('dest') || 'Computing';
 
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map', { zoomControl: true }).setView(dduCenter, 17);
@@ -37,7 +37,7 @@ async function loadLocations() {
         renderList(allLocations);
         renderMarkers(allLocations);
 
-        // Find initial destination
+        // Smart matching for short query parameters from the bot
         let target = allLocations.find(loc => loc.name.toLowerCase().includes(requestedDest.toLowerCase())) || allLocations[0];
         if (target) {
             setDestination(target);

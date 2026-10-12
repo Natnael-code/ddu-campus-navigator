@@ -21,21 +21,24 @@ if not BOT_TOKEN:
 WEBAPP_URL = "https://telegram-route-app.onrender.com/index.html"
 
 async def post_init(application: Application) -> None:
+    # Completely clear any webhooks or conflicting instances
     await application.bot.delete_webhook(drop_pending_updates=True)
     await application.bot.delete_my_commands()
-    logger.info("Cleared webhooks and menu commands.")
+    logger.info("Cleared webhooks and menu commands successfully.")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         user = update.effective_user
+        
+        # Use short, clean URL parameters to prevent Telegram button URL errors
         keyboard = [
             [
-                KeyboardButton("💻 Block-15 (Computing) - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Block-15 (School of Computing)&start=gps")),
-                KeyboardButton("📚 Main Library - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Main Library&start=gps"))
+                KeyboardButton("💻 School of Computing", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Computing")),
+                KeyboardButton("📚 Main Library", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Library"))
             ],
             [
-                KeyboardButton("🏥 Hospital - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Hospital&start=gps")),
-                KeyboardButton("🚪 Mermersa Gate - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Mermersa Gate&start=gps"))
+                KeyboardButton("🏥 Hospital", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Hospital")),
+                KeyboardButton("🚪 Mermersa Gate", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Mermersa Gate"))
             ],
             [
                 KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=WEBAPP_URL))
@@ -50,7 +53,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
         )
         
-        # Removed parse_mode="Markdown" to prevent formatting crashes
         await update.message.reply_text(
             welcome_text,
             reply_markup=reply_markup
