@@ -1,17 +1,12 @@
 import os
 import json
-import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
-from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
-from telegram.ext import Application, CommandHandler, ContextTypes
-from telegram.request import HTTPXRequest
 
 load_dotenv()
-TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
 app = FastAPI(title="DDU Campus Live Navigator API")
 
@@ -52,48 +47,3 @@ def serve_index():
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return {"error": "index.html not found"}, 404
-
-LIVE_URL = "https://telegram-route-app.onrender.com/index.html"
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    
-    keyboard = [
-        [
-            KeyboardButton("💻 Block-15 (Computing) - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Block-15 (School of Computing)&start=gps")),
-            KeyboardButton("📚 Main Library - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Main Library&start=gps"))
-        ],
-        [
-            KeyboardButton("🏥 Hospital - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Hospital&start=gps")),
-            KeyboardButton("🚪 Mermersa Gate - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Mermersa Gate&start=gps"))
-        ],
-        [
-            KeyboardButton("🗺️ Open Full Map & Search All Buildings", web_app=WebAppInfo(url=LIVE_URL))
-        ]
-    ]
-    
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    
-    welcome_message = (
-        f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the **DDU Live Campus Navigator** 🏫\n"
-        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
-    )
-    
-    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
-
-@app.on_event("startup")
-async def startup_event():
-    if TOKEN:
-        request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
-        application = Application.builder().token(TOKEN).request(request).build()
-        
-        # Clear any stuck webhooks so polling works reliably
-        await application.bot.delete_webhook(drop_pending_updates=True)
-        
-        application.add_handler(CommandHandler("start", start))
-        await application.initialize()
-        await application.start()
-        
-        asyncio.create_task(application.updater.start_polling(drop_pending_updates=True))
-        print("🤖 Telegram Bot webhook cleared and polling started successfully!")
