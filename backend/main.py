@@ -22,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Robust path handling for Render
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "data", "locations.json")
 FRONTEND_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend"))
@@ -36,6 +37,7 @@ def load_locations():
 def get_locations():
     return load_locations()
 
+# Mount frontend files explicitly
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(FRONTEND_DIR, "js")), name="js")
@@ -51,7 +53,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     locations = load_locations()
     
-    # Direct list of all buildings as Mini App web_app buttons
     keyboard = []
     for loc in locations:
         target_url = f"{LIVE_URL}?target={loc['name']}"
@@ -63,12 +64,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ])
 
     reply_markup = InlineKeyboardMarkup(keyboard)
-
-    welcome_message = (
-        f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the **DDU Live Campus Navigator**.\n"
-        f"Click any building or block below to instantly open live GPS navigation to it!"
-    )
+    welcome_message = f"👋 Hello {user.first_name}!\n\nClick any building or block below to open live GPS navigation:"
     
     await update.message.reply_text(welcome_message, reply_markup=reply_markup)
 
@@ -80,4 +76,3 @@ async def startup_event():
         await application.initialize()
         await application.start()
         asyncio.create_task(application.updater.start_polling())
-        print("🤖 Telegram Bot polling started successfully!")
