@@ -4,7 +4,7 @@ tg.expand();
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map').setView(dduCenter, 17);
 
-// High-resolution satellite layer
+// High-resolution crisp satellite layer
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles &copy; Esri',
     maxZoom: 19
