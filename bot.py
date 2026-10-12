@@ -22,7 +22,6 @@ if not BOT_TOKEN:
 
 WEBAPP_URL = "https://telegram-route-app.onrender.com/index.html"
 
-# Health check server so Render keeps the background worker alive
 class HealthCheckHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -53,8 +52,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 KeyboardButton("📚 Main Library - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Main Library&start=gps"))
             ],
             [
-                KeyboardButton("🏥 Hospital - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Hospital&start=gps")),
-                KeyboardButton("🚪 Mermersa Gate - Live GPS", web_app=WebAppInfo(url=f"{LIVE_URL}?dest=Mermersa Gate&start=gps"))
+                KeyboardButton("🏥 Hospital - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Hospital&start=gps")),
+                KeyboardButton("🚪 Mermersa Gate - Live GPS", web_app=WebAppInfo(url=f"{WEBAPP_URL}?dest=Mermersa Gate&start=gps"))
             ],
             [
                 KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=WEBAPP_URL))
@@ -82,7 +81,6 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     logger.error("Error occurred:", exc_info=context.error)
 
 def main():
-    # Start health check server in background thread for Render
     threading.Thread(target=start_health_check_server, daemon=True).start()
 
     request = HTTPXRequest(
