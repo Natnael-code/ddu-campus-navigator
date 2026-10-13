@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
-# Hardcoded directly to your active Render live URL to prevent any http:// or empty string failures
+# Corrected to your actual live Render URL
 RENDER_URL = "https://ddu-campus-navigator.onrender.com"
 
 if not TOKEN:
