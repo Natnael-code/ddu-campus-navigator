@@ -1,7 +1,8 @@
 import os
 import json
 import logging
-from fastapi import FastAPI, Request
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -16,7 +17,55 @@ load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 RENDER_URL = "https://telegram-route-app.onrender.com"
 
-app = FastAPI(title="DDU Campus Live Navigator API")
+# Initialize python-telegram-bot application globally
+telegram_app = Application.builder().token(TOKEN).updater(None).build()
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    webapp_url = f"{RENDER_URL}/index.html"
+    
+    keyboard = [
+        [
+            KeyboardButton("💻 School of Computing", web_app=WebAppInfo(url=f"{webapp_url}?dest=Computing")),
+            KeyboardButton("📚 Main Library", web_app=WebAppInfo(url=f"{webapp_url}?dest=Library"))
+        ],
+        [
+            KeyboardButton("🏥 Hospital", web_app=WebAppInfo(url=f"{webapp_url}?dest=Hospital")),
+            KeyboardButton("🚪 Mermersa Gate", web_app=WebAppInfo(url=f"{webapp_url}?dest=Mermersa Gate"))
+        ],
+        [
+            KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=webapp_url))
+        ]
+    ]
+    
+    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+    welcome_message = (
+        f"👋 Hello {user.first_name}!\n\n"
+        f"Welcome to the DDU Live Campus Navigator 🏫\n"
+        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
+    )
+    
+    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
+
+# Register handlers
+telegram_app.add_handler(CommandHandler("start", start))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: initialize telegram app and register webhook url with telegram api
+    await telegram_app.initialize()
+    await telegram_app.start()
+    webhook_url = f"{RENDER_URL}/webhook"
+    await telegram_app.bot.set_webhook(url=webhook_url)
+    logger.info(f"Telegram Webhook initialized at: {webhook_url}")
+    
+    yield
+    
+    # Shutdown: stop telegram app cleanly
+    await telegram_app.stop()
+    await telegram_app.shutdown()
+
+app = FastAPI(title="DDU Campus Live Navigator API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,60 +105,12 @@ def serve_index():
         return FileResponse(index_file)
     return {"error": "index.html not found"}, 404
 
-# Telegram Bot Setup using Webhooks
-telegram_app = None
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    webapp_url = f"{RENDER_URL}/index.html"
-    
-    keyboard = [
-        [
-            KeyboardButton("💻 School of Computing", web_app=WebAppInfo(url=f"{webapp_url}?dest=Computing")),
-            KeyboardButton("📚 Main Library", web_app=WebAppInfo(url=f"{webapp_url}?dest=Library"))
-        ],
-        [
-            KeyboardButton("🏥 Hospital", web_app=WebAppInfo(url=f"{webapp_url}?dest=Hospital")),
-            KeyboardButton("🚪 Mermersa Gate", web_app=WebAppInfo(url=f"{webapp_url}?dest=Mermersa Gate"))
-        ],
-        [
-            KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=webapp_url))
-        ]
-    ]
-    
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    welcome_message = (
-        f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the DDU Live Campus Navigator 🏫\n"
-        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
-    )
-    
-    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
-
-@app.on_event("startup")
-async def startup_event():
-    global telegram_app
-    if TOKEN:
-        telegram_app = Application.builder().token(TOKEN).build()
-        telegram_app.add_handler(CommandHandler("start", start))
-        await telegram_app.initialize()
-        await telegram_app.start()
-        # Automatically set the webhook URL with Telegram
-        webhook_url = f"{RENDER_URL}/webhook"
-        await telegram_app.bot.set_webhook(url=webhook_url)
-        logger.info(f"Webhook set successfully to {webhook_url}")
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    global telegram_app
-    if telegram_app:
-        await telegram_app.stop()
-
 @app.post("/webhook")
 async def telegram_webhook(request: Request):
-    global telegram_app
-    if telegram_app:
+    try:
         data = await request.json()
         update = Update.de_json(data, telegram_app.bot)
         await telegram_app.process_update(update)
-    return {"status": "ok"}
+    except Exception as e:
+        logger.error(f"Error processing webhook update: {e}")
+    return Response(status_code=200)
