@@ -1,14 +1,15 @@
 import os
 import json
 import logging
-from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request, Response
+import threading
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.request import HTTPXRequest
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,14 +17,13 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
-# Corrected to your actual live Render URL
+# Your verified live Render URL
 RENDER_URL = "https://ddu-campus-navigator.onrender.com"
 
 if not TOKEN:
     logger.error("CRITICAL: BOT_TOKEN is missing from environment variables!")
 
-telegram_app = Application.builder().token(TOKEN).updater(None).build()
-
+# --- TELEGRAM BOT POLLING SETUP ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user = update.effective_user
@@ -55,28 +55,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logger.error(f"Error handling /start command: {e}")
 
-telegram_app.add_handler(CommandHandler("start", start))
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def run_telegram_bot():
     try:
-        await telegram_app.initialize()
-        await telegram_app.start()
-        webhook_url = f"{RENDER_URL}/webhook"
-        await telegram_app.bot.set_webhook(url=webhook_url)
-        logger.info(f"Telegram Webhook successfully set to: {webhook_url}")
+        request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
+        application = Application.builder().token(TOKEN).request(request).build()
+        application.add_handler(CommandHandler("start", start))
+        
+        logger.info("Starting Telegram bot polling...")
+        # Clear any old webhooks so polling can take over cleanly
+        application.bot.delete_webhook(drop_pending_updates=True)
+        application.run_polling(drop_pending_updates=True, allowed_updates=Update.ALL_TYPES)
     except Exception as e:
-        logger.error(f"Failed to set Telegram webhook on startup: {e}")
-    
-    yield
-    
-    try:
-        await telegram_app.stop()
-        await telegram_app.shutdown()
-    except Exception as e:
-        logger.error(f"Error during shutdown: {e}")
+        logger.error(f"Error in telegram bot polling thread: {e}")
 
-app = FastAPI(title="DDU Campus Live Navigator API", lifespan=lifespan)
+# Start the bot in a background thread alongside FastAPI
+threading.Thread(target=run_telegram_bot, daemon=True).start()
+
+# --- FASTAPI WEB SERVER ---
+app = FastAPI(title="DDU Campus Live Navigator API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -115,13 +111,3 @@ def serve_index():
     if os.path.exists(index_file):
         return FileResponse(index_file)
     return {"error": "index.html not found"}, 404
-
-@app.post("/webhook")
-async def telegram_webhook(request: Request):
-    try:
-        data = await request.json()
-        update = Update.de_json(data, telegram_app.bot)
-        await telegram_app.process_update(update)
-    except Exception as e:
-        logger.error(f"Error processing webhook update: {e}")
-    return Response(status_code=200)
