@@ -147,6 +147,23 @@ input:checked+.slider:before {
     height: 100%;
 }
 
+/* Hides Google's default embedded map text/POI labels on satellite tiles */
+.leaflet-tile-pane {
+    filter: saturate(1.1) contrast(1.1);
+}
+
+/* Permanent landmark badge styles for OUR named locations */
+.landmark-label {
+    background-color: #0f172a;
+    color: #ffffff;
+    border: 1px solid #38bdf8;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: bold;
+    font-size: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
 #status-banner {
     position: absolute;
     top: 12px;

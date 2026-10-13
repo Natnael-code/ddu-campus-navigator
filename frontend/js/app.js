@@ -48,15 +48,19 @@ async function loadLocations() {
 }
 
 function renderMarkers(locations) {
-    // Clear old markers
     markersMap.forEach((marker) => map.removeLayer(marker));
     markersMap.clear();
 
     locations.forEach(loc => {
         let marker = L.marker([loc.lat, loc.lng]);
 
-        // Popup with name on click (Permanent text badge labels removed from map view)
-        marker.bindPopup(`<b>📍 ${loc.name}</b><br><span>${loc.category}</span>`);
+        // Restore permanent badge labels for OUR named locations
+        marker.bindTooltip(`📍 ${loc.name}`, {
+            permanent: true,
+            direction: 'top',
+            className: 'landmark-label'
+        });
+
         marker.on('click', () => setDestination(loc));
 
         if (showAllEnabled || (currentDestination && currentDestination.name === loc.name)) {
@@ -94,7 +98,7 @@ function renderList(locations) {
     });
 }
 
-// Single-word partial matching search logic
+// Fast Single-Word Partial Matching Search
 function filterLocations() {
     let query = document.getElementById('search-box').value.toLowerCase().trim();
     if (!query) {
@@ -115,7 +119,6 @@ function setDestination(loc) {
     currentDestination = loc;
     statusBanner.innerText = `🎯 Navigating to ${loc.name}`;
 
-    // Update marker visibility based on toggle state
     markersMap.forEach((marker, name) => {
         if (showAllEnabled || name === loc.name) {
             if (!map.hasLayer(marker)) marker.addTo(map);
@@ -123,11 +126,6 @@ function setDestination(loc) {
             if (map.hasLayer(marker)) map.removeLayer(marker);
         }
     });
-
-    let targetMarker = markersMap.get(loc.name);
-    if (targetMarker) {
-        targetMarker.openPopup();
-    }
 
     if (userMarker) {
         updateRoute(userMarker.getLatLng(), [loc.lat, loc.lng]);

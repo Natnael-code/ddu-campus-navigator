@@ -17,47 +17,61 @@ load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 RENDER_URL = "https://telegram-route-app.onrender.com"
 
+if not TOKEN:
+    logger.error("CRITICAL: BOT_TOKEN is missing from environment variables!")
+
 telegram_app = Application.builder().token(TOKEN).updater(None).build()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    webapp_url = f"{RENDER_URL}/index.html"
-    
-    keyboard = [
-        [
-            KeyboardButton("💻 School of Computing", web_app=WebAppInfo(url=f"{webapp_url}?dest=Computing")),
-            KeyboardButton("📚 Main Library", web_app=WebAppInfo(url=f"{webapp_url}?dest=Library"))
-        ],
-        [
-            KeyboardButton("🏥 Hospital", web_app=WebAppInfo(url=f"{webapp_url}?dest=Hospital")),
-            KeyboardButton("🚪 Mermersa Gate", web_app=WebAppInfo(url=f"{webapp_url}?dest=Mermersa Gate"))
-        ],
-        [
-            KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=webapp_url))
+    try:
+        user = update.effective_user
+        webapp_url = f"{RENDER_URL}/index.html"
+        
+        keyboard = [
+            [
+                KeyboardButton("💻 School of Computing", web_app=WebAppInfo(url=f"{webapp_url}?dest=Computing")),
+                KeyboardButton("📚 Main Library", web_app=WebAppInfo(url=f"{webapp_url}?dest=Library"))
+            ],
+            [
+                KeyboardButton("🏥 Hospital", web_app=WebAppInfo(url=f"{webapp_url}?dest=Hospital")),
+                KeyboardButton("🚪 Mermersa Gate", web_app=WebAppInfo(url=f"{webapp_url}?dest=Mermersa Gate"))
+            ],
+            [
+                KeyboardButton("🗺️ Open Full Map & Search All", web_app=WebAppInfo(url=webapp_url))
+            ]
         ]
-    ]
-    
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-    welcome_message = (
-        f"👋 Hello {user.first_name}!\n\n"
-        f"Welcome to the DDU Live Campus Navigator 🏫\n"
-        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
-    )
-    
-    await update.message.reply_text(welcome_message, reply_markup=reply_markup)
+        
+        reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
+        welcome_message = (
+            f"👋 Hello {user.first_name}!\n\n"
+            f"Welcome to the DDU Live Campus Navigator 🏫\n"
+            f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
+        )
+        
+        await update.message.reply_text(welcome_message, reply_markup=reply_markup)
+    except Exception as e:
+        logger.error(f"Error handling /start command: {e}")
 
 telegram_app.add_handler(CommandHandler("start", start))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await telegram_app.initialize()
-    await telegram_app.start()
-    webhook_url = f"{RENDER_URL}/webhook"
-    await telegram_app.bot.set_webhook(url=webhook_url)
-    logger.info(f"Telegram Webhook initialized at: {webhook_url}")
+    try:
+        await telegram_app.initialize()
+        await telegram_app.start()
+        webhook_url = f"{RENDER_URL}/webhook"
+        await telegram_app.bot.set_webhook(url=webhook_url)
+        logger.info(f"Telegram Webhook successfully set to: {webhook_url}")
+    except Exception as e:
+        logger.error(f"Failed to set Telegram webhook on startup: {e}")
+    
     yield
-    await telegram_app.stop()
-    await telegram_app.shutdown()
+    
+    try:
+        await telegram_app.stop()
+        await telegram_app.shutdown()
+    except Exception as e:
+        logger.error(f"Error during shutdown: {e}")
 
 app = FastAPI(title="DDU Campus Live Navigator API", lifespan=lifespan)
 
@@ -103,6 +117,7 @@ def serve_index():
 async def telegram_webhook(request: Request):
     try:
         data = await request.json()
+        logger.info(f"Received webhook update: {data}")
         update = Update.de_json(data, telegram_app.bot)
         await telegram_app.process_update(update)
     except Exception as e:
