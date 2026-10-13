@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
-# Your live Render URL
+# Explicitly ensure the HTTPS scheme and live domain
 RENDER_URL = "https://ddu-campus-navigator.onrender.com"
 
 if not TOKEN:
@@ -27,6 +27,7 @@ telegram_app = Application.builder().token(TOKEN).updater(None).build()
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user = update.effective_user
+        # Explicitly construct the full HTTPS URL for the WebApp
         webapp_url = f"{RENDER_URL}/index.html"
         
         keyboard = [
