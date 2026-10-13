@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 
-# Automatically use Render's dynamic external URL or fallback to localhost
-RENDER_URL = os.getenv("RENDER_EXTERNAL_URL") or "http://127.0.0.1:8000"
+# Hardcoded directly to your active Render live URL to prevent any http:// or empty string failures
+RENDER_URL = "https://ddu-campus-navigator.onrender.com"
 
 if not TOKEN:
     logger.error("CRITICAL: BOT_TOKEN is missing from environment variables!")
@@ -120,7 +120,6 @@ def serve_index():
 async def telegram_webhook(request: Request):
     try:
         data = await request.json()
-        logger.info(f"Received webhook payload: {data}")
         update = Update.de_json(data, telegram_app.bot)
         await telegram_app.process_update(update)
     except Exception as e:
