@@ -550,5 +550,77 @@
         "category": "Gate",
         "lat": 9.616253371528778,
         "lng": 41.840807942194346
+    },
+    {
+        "name": "Twins-R",
+        "category": "Dormitory",
+        "lat": 9.619707720161303,
+        "lng": 41.8415222338388
+    },
+    {
+        "name": "Twins-Q",
+        "category": "Dormitory",
+        "lat": 9.619237437883957,
+        "lng": 41.84147046758551
+    },
+    {
+        "name": "Twins-P",
+        "category": "Dormitory",
+        "lat": 9.618978600072342,
+        "lng": 41.841965944581375
+    },
+    {
+        "name": "Twins-M",
+        "category": "Dormitory",
+        "lat": 9.619273893897846,
+        "lng": 41.84247621193533
+    },
+    {
+        "name": "Twins-L",
+        "category": "Dormitory",
+        "lat": 9.619642099417685,
+        "lng": 41.84246881675628
+    },
+    {
+        "name": "Twins-H",
+        "category": "Dormitory",
+        "lat": 9.619977494195627,
+        "lng": 41.84246881675628
+    },
+    {
+        "name": "Wings-1",
+        "category": "Dormitory",
+        "lat": 9.61831874501878,
+        "lng": 41.84155181453683
+    },
+    {
+        "name": "Wings-2",
+        "category": "Dormitory",
+        "lat": 9.617768257227757,
+        "lng": 41.84174778677648
+    },
+    {
+        "name": "Hayat-A",
+        "category": "Dormitory",
+        "lat": 9.620265495972788,
+        "lng": 41.84201031565739
+    },
+    {
+        "name": "Hayat-B",
+        "category": "Dormitory",
+        "lat": 9.619988430981408,
+        "lng": 41.841984432530744
+    },
+    {
+        "name": "Hayat-C",
+        "category": "Dormitory",
+        "lat": 9.619689492183372,
+        "lng": 41.841969642172664
+    },
+    {
+        "name": "Hayat-D",
+        "category": "Dormitory",
+        "lat": 9.619427009118343,
+        "lng": 41.84194745663554
     }
 ]
