@@ -1,7 +1,5 @@
 import logging
 import os
-import threading
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from dotenv import load_dotenv
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update, WebAppInfo
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -22,27 +20,10 @@ if not BOT_TOKEN:
 
 WEBAPP_URL = "https://telegram-route-app.onrender.com/index.html"
 
-# Minimal HTTP server to satisfy Render's web service port requirement
-class HealthCheckHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/plain")
-        self.end_headers()
-        self.wfile.write(b"OK")
-
-    def log_message(self, format, *args):
-        return
-
-def start_health_check_server():
-    port = int(os.environ.get("PORT", 8080))
-    server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
-    logger.info(f"Health check server running on port {port}")
-    server.serve_forever()
-
 async def post_init(application: Application) -> None:
     await application.bot.delete_webhook(drop_pending_updates=True)
     await application.bot.delete_my_commands()
-    logger.info("Cleared webhooks and menu commands successfully.")
+    logger.info("Cleared webhooks successfully.")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
@@ -81,9 +62,6 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     logger.error("Error occurred:", exc_info=context.error)
 
 def main():
-    # Start health check server in background thread so Render detects an open port
-    threading.Thread(target=start_health_check_server, daemon=True).start()
-
     request = HTTPXRequest(
         connect_timeout=30.0,
         read_timeout=30.0,
