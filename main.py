@@ -17,7 +17,6 @@ load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
 RENDER_URL = "https://telegram-route-app.onrender.com"
 
-# Initialize python-telegram-bot application globally
 telegram_app = Application.builder().token(TOKEN).updater(None).build()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -47,21 +46,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(welcome_message, reply_markup=reply_markup)
 
-# Register handlers
 telegram_app.add_handler(CommandHandler("start", start))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: initialize telegram app and register webhook url with telegram api
     await telegram_app.initialize()
     await telegram_app.start()
     webhook_url = f"{RENDER_URL}/webhook"
     await telegram_app.bot.set_webhook(url=webhook_url)
     logger.info(f"Telegram Webhook initialized at: {webhook_url}")
-    
     yield
-    
-    # Shutdown: stop telegram app cleanly
     await telegram_app.stop()
     await telegram_app.shutdown()
 

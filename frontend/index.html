@@ -6,14 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DDU Live Campus Navigator</title>
 
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Leaflet Routing Machine CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
@@ -24,20 +21,24 @@
     <div id="status-banner">📡 Initializing live GPS navigation...</div>
 
     <div class="app-container">
-        <!-- Sidebar for searching and changing destinations -->
         <div class="sidebar">
             <div class="header">
                 <h2>🏫 DDU Campus Guide</h2>
                 <p>Search & change destination</p>
-                <input type="text" id="search-box" placeholder="Search block, dorm, gate..."
-                    onkeyup="filterLocations()">
+                <input type="text" id="search-box" placeholder="Search block, dorm, gate..." onkeyup="filterLocations()">
+                
+                <!-- Toggle Switch for Showing All Locations -->
+                <div class="toggle-container">
+                    <label class="switch">
+                        <input type="checkbox" id="show-all-toggle" checked onchange="toggleShowAll()">
+                        <span class="slider round"></span>
+                    </label>
+                    <span id="toggle-label">Show All Locations</span>
+                </div>
             </div>
-            <div id="building-list" class="building-list">
-                <!-- Populated dynamically -->
-            </div>
+            <div id="building-list" class="building-list"></div>
         </div>
 
-        <!-- Map View -->
         <div id="map"></div>
     </div>
 
