@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_TOKEN") or os.getenv("BOT_TOKEN")
-RENDER_URL = "https://telegram-route-app.onrender.com"
+
+# Automatically use Render's dynamic external URL or fallback to localhost
+RENDER_URL = os.getenv("RENDER_EXTERNAL_URL") or "http://127.0.0.1:8000"
 
 if not TOKEN:
     logger.error("CRITICAL: BOT_TOKEN is missing from environment variables!")
@@ -49,6 +51,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
         await update.message.reply_text(welcome_message, reply_markup=reply_markup)
+        logger.info(f"Successfully answered /start for user {user.id}")
     except Exception as e:
         logger.error(f"Error handling /start command: {e}")
 
@@ -117,7 +120,7 @@ def serve_index():
 async def telegram_webhook(request: Request):
     try:
         data = await request.json()
-        logger.info(f"Received webhook update: {data}")
+        logger.info(f"Received webhook payload: {data}")
         update = Update.de_json(data, telegram_app.bot)
         await telegram_app.process_update(update)
     except Exception as e:
