@@ -3,13 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DDU Live Campus Navigator</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Map rotation plugin (must load right after Leaflet, before creating the map) -->
+    <script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate-src.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
@@ -21,12 +24,19 @@
     <div id="status-banner">📡 Initializing live GPS navigation...</div>
 
     <div class="app-container">
-        <div class="sidebar">
+        <div id="map"></div>
+
+        <!-- Floating circle buttons (right-middle of the screen) -->
+        <button id="menu-toggle" class="fab" aria-label="Open or close menu" onclick="toggleMenu()">☰</button>
+        <button id="follow-toggle" class="fab" aria-label="Follow my direction" onclick="toggleFollow()">🧭</button>
+
+        <div class="sidebar" id="sidebar">
             <div class="header">
                 <h2>🏫 DDU Campus Guide</h2>
                 <p>Search & change destination</p>
-                <input type="text" id="search-box" placeholder="Search block, dorm, gate..." onkeyup="filterLocations()">
-                
+                <input type="search" id="search-box" placeholder="Search block, dorm, gate..." autocomplete="off"
+                    oninput="filterLocations()" onkeydown="onSearchKey(event)">
+
                 <!-- Toggle Switch for Showing All Locations -->
                 <div class="toggle-container">
                     <label class="switch">
@@ -36,10 +46,9 @@
                     <span id="toggle-label">Show All Locations</span>
                 </div>
             </div>
+            <div id="result-count" class="result-count"></div>
             <div id="building-list" class="building-list"></div>
         </div>
-
-        <div id="map"></div>
     </div>
 
     <script src="js/app.js"></script>

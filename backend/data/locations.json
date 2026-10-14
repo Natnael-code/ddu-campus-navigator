@@ -90,19 +90,19 @@
         "lng": 41.83856388869617
     },
     {
-        "name": "Block-53",
+        "name": "Block-53 (workshop)",
         "category": "Academic",
         "lat": 9.62056344023575,
         "lng": 41.83832424987231
     },
     {
-        "name": "Block-52",
+        "name": "Block-52 (workshop)",
         "category": "Academic",
         "lat": 9.620852418950204,
         "lng": 41.83832645996242
     },
     {
-        "name": "Block-51",
+        "name": "Block-51 (workshop)",
         "category": "Academic",
         "lat": 9.621148447985309,
         "lng": 41.838323893705564
@@ -138,7 +138,7 @@
         "lng": 41.83889173419513
     },
     {
-        "name": "Block-50",
+        "name": "Block-50 (workshop)",
         "category": "Academic",
         "lat": 9.62207579638883,
         "lng": 41.838707195993614
@@ -462,19 +462,19 @@
         "lng": 41.840365219057105
     },
     {
-        "name": "Main Library",
+        "name": "Block-32 Main Library",
         "category": "Library",
         "lat": 9.621282888012514,
         "lng": 41.840696881890466
     },
     {
-        "name": "College of Business and Economics",
+        "name": "Block-37 College of Business and Economics",
         "category": "Academic",
         "lat": 9.620830466271249,
         "lng": 41.84048788887219
     },
     {
-        "name": "Block-36",
+        "name": "Block-36 institution of technology",
         "category": "Academic",
         "lat": 9.620839425123496,
         "lng": 41.84085135499093
@@ -486,13 +486,13 @@
         "lng": 41.84116030119187
     },
     {
-        "name": "Block-34",
+        "name": "Block-33 School of Natural Science",
         "category": "Academic",
         "lat": 9.62156156041216,
         "lng": 41.84112471211558
     },
     {
-        "name": "School of Natural Science",
+        "name": "Block-34 School of social Science",
         "category": "Academic",
         "lat": 9.621265932838574,
         "lng": 41.84115520485908
@@ -600,8 +600,8 @@
         "lng": 41.84174778677648
     },
     {
-        "name": "Hayat-A",
-        "category": "Dormitory",
+        "name": "dormitory office",
+        "category": "office",
         "lat": 9.620265495972788,
         "lng": 41.84201031565739
     },
@@ -616,6 +616,18 @@
         "category": "Dormitory",
         "lat": 9.619689492183372,
         "lng": 41.841969642172664
+    },
+    {
+        "name": "Block-8",
+        "category": "Academic",
+        "lat": 9.621854347589757,
+        "lng": 41.840059606262734
+    },
+    {
+        "name": "post office",
+        "category": "Service",
+        "lat": 9.621525482178704,
+        "lng": 41.841218855632405
     },
     {
         "name": "Hayat-D",
