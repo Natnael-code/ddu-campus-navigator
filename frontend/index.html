@@ -23,6 +23,27 @@
 <body>
     <div id="status-banner">📡 Initializing live GPS navigation...</div>
 
+    <!-- Support / Contact (top of the map) -->
+    <button id="support-toggle" class="support-btn" aria-label="Support and contact"
+        onclick="toggleSupport(event)">💬</button>
+    <div id="support-card" class="support-card" onclick="event.stopPropagation()">
+        <div class="support-title">🛠️ Support &amp; Contact</div>
+        <p class="support-sub">The team behind this project. Reach out for help, feedback or wrong locations.</p>
+
+        <div class="support-row">
+            <a href="mailto:zekariyasnigus4@gmail.com">zekariyasnigus4@gmail.com</a>
+            <button onclick="copyEmail('zekariyasnigus4@gmail.com', this)">Copy</button>
+        </div>
+        <div class="support-row">
+            <a href="mailto:hnatnael73@gmail.com">hnatnael73@gmail.com</a>
+            <button onclick="copyEmail('hnatnael73@gmail.com', this)">Copy</button>
+        </div>
+        <div class="support-row">
+            <a href="mailto:sintayehu2221@gmail.com">sintayehu2221@gmail.com</a>
+            <button onclick="copyEmail('sintayehu2221@gmail.com', this)">Copy</button>
+        </div>
+    </div>
+
     <div class="app-container">
         <div id="map"></div>
 
@@ -52,6 +73,36 @@
     </div>
 
     <script src="js/app.js"></script>
+
+    <!-- Support card behaviour (separate from app.js so navigation code is untouched) -->
+    <script>
+        function toggleSupport(e) {
+            if (e) e.stopPropagation();
+            document.body.classList.toggle('support-open');
+        }
+
+        function copyEmail(email, btn) {
+            const done = () => {
+                const old = btn.innerText;
+                btn.innerText = 'Copied ✓';
+                setTimeout(() => (btn.innerText = old), 1500);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(email).then(done).catch(done);
+            } else {
+                const t = document.createElement('textarea');
+                t.value = email;
+                document.body.appendChild(t);
+                t.select();
+                try { document.execCommand('copy'); } catch (err) { }
+                document.body.removeChild(t);
+                done();
+            }
+        }
+
+        // Tap anywhere else (map, menu) to close the support card
+        document.addEventListener('click', () => document.body.classList.remove('support-open'));
+    </script>
 </body>
 
 </html>

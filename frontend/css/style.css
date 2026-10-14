@@ -299,3 +299,100 @@ input:checked+.slider:before {
         width: 70%;
     }
 }
+
+/* ================= Support / Contact ================= */
+.support-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1200;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    transition: right 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.support-card {
+    position: fixed;
+    top: 60px;
+    right: 12px;
+    width: min(320px, calc(100vw - 24px));
+    background: #ffffff;
+    color: #263238;
+    border-radius: 12px;
+    padding: 14px;
+    z-index: 1300;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease, transform 0.2s ease, right 0.3s ease, visibility 0.2s;
+}
+
+body.support-open .support-card {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.support-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #004d40;
+    margin-bottom: 4px;
+}
+
+.support-sub {
+    font-size: 0.75rem;
+    color: #607d8b;
+    margin-bottom: 10px;
+    line-height: 1.35;
+}
+
+.support-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    background: #f1f8f7;
+    border: 1px solid #b2dfdb;
+    border-radius: 8px;
+}
+
+.support-row a {
+    color: #00796b;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.support-row button {
+    flex-shrink: 0;
+    border: none;
+    background: #004d40;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Slide left together with the menu panel so they never overlap */
+body.menu-open .support-btn,
+body.menu-open .support-card {
+    right: calc(min(320px, 85vw) + 12px);
+}
