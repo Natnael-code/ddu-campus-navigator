@@ -396,3 +396,16 @@ body.menu-open .support-btn,
 body.menu-open .support-card {
     right: calc(min(320px, 85vw) + 12px);
 }
+
+.support-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.support-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #263238;
+}
