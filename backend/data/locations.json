@@ -630,6 +630,30 @@
         "lng": 41.841218855632405
     },
     {
+        "name": "peace forum",
+        "category": "Service",
+        "lat": 9.620756900401048,
+        "lng": 41.83964612652903
+    },
+    {
+        "name": "student police",
+        "category": "Service",
+        "lat": 9.619904553206892,
+        "lng": 41.83953018344427
+    },
+    {
+        "name": "ምዕራብ MKC (fellowship)",
+        "category": "Religious",
+        "lat": 9.619904553206892,
+        "lng": 41.83953018344427
+    },
+    {
+        "name": "ሥላሴ ቤተ ክርስቲያን (ጊቢ ጉባኤ)",
+        "category": "Religious",
+        "lat": 9.612776226356333,
+        "lng": 41.837574127205244
+    },
+    {
         "name": "Hayat-D",
         "category": "Dormitory",
         "lat": 9.619427009118343,

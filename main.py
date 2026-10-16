@@ -47,8 +47,8 @@ def build_keyboard() -> ReplyKeyboardMarkup:
 
     keyboard = [
         [
-            KeyboardButton("💻 School of Computing", web_app=dest("Computing")),
-            KeyboardButton("📚 Main Library", web_app=dest("Library")),
+            KeyboardButton("💻 School of Computing", web_app=dest("Block-15 (School of Computing)")),
+            KeyboardButton("📚 Main Library", web_app=dest("Block-32 Main Library")),
         ],
         [
             KeyboardButton("🏥 Hospital", web_app=dest("Hospital")),
@@ -68,7 +68,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_message = (
         f"👋 Hello {user.first_name}!\n\n"
         f"Welcome to the DDU Live Campus Navigator 🏫\n"
-        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!"
+        f"Select a destination below to get turn-by-turn live GPS routing and guidance right inside the Mini App!\n\n"
+        f"⚠️ For seamless navigation:\n"
+        f"📍 Allow location permission when asked\n"
+        f"🛰️ Turn ON Location / GPS on your phone"
     )
     try:
         await update.message.reply_text(welcome_message, reply_markup=build_keyboard())

@@ -64,6 +64,125 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
     ? 'http://127.0.0.1:8000/api/locations'
     : '/api/locations';
 
+/* =====================  ICONS, COLOURS, GIRLS / MEN DORMS  ===================== */
+/* CLASSIFY START */
+
+// Girls dorms: Twins P,Q,R,S,M,L,H  and  Hayat B,C,D  (every other dorm = men's dorm)
+const GIRLS_DORMS = {
+    twins: 'pqrsmlh',
+    hayat: 'bcd',
+    wings: '1'
+};
+
+const COLORS = {
+    girls: '#ec4899',      // pink
+    men: '#2563eb',        // blue
+    Academic: '#0f766e',
+    Administrative: '#7c3aed',
+    Service: '#d97706',
+    Dining: '#ea580c',
+    Library: '#4f46e5',
+    Gate: '#475569',
+    Hall: '#92400e',
+    Sports: '#16a34a',
+    Health: '#dc2626',
+    Religious: '#a16207',
+    Office: '#0e7490',
+    Other: '#0f172a'
+};
+
+// First matching rule wins (matched against the lower-case name)
+const NAME_ICONS = [
+    [/hospital|clinic/, '🏥'],
+    [/church|ቤተ ክርስቲያን|fellowship|mkc/, '⛪'],
+    [/gate/, '🚪'],
+    [/library/, '📚'],
+    [/stadium/, '🏟️'],
+    [/basketball/, '🏀'],
+    [/cafe/, '☕'],
+    [/bank/, '🏦'],
+    [/book ?store/, '📖'],
+    [/post office/, '📮'],
+    [/day ?care/, '🧸'],
+    [/police/, '👮'],
+    [/peace/, '🕊️'],
+    [/cost sharing/, '💰'],
+    [/student service/, '🙋'],
+    [/president/, '👔'],
+    [/registrar/, '🗂️'],
+    [/dormitory office/, '🛎️'],
+    [/incubation/, '💡'],
+    [/\bict\b|computing/, '💻'],
+    [/electrical|computer/, '⚡'],
+    [/architecture/, '📐'],
+    [/textile|fashion/, '🧵'],
+    [/chemical|bio/, '🧪'],
+    [/laborator/, '🔬'],
+    [/stem/, '🔭'],
+    [/workshop/, '🔧'],
+    [/medicine|health/, '🩺'],
+    [/\blaw\b|moot/, '⚖️'],
+    [/business|econom/, '💼'],
+    [/political|international/, '🌐'],
+    [/social science/, '👥'],
+    [/post graduate/, '🎓'],
+    [/natural science/, '🔬'],
+    [/technology/, '⚙️'],
+    [/secondary school/, '🏫'],
+    [/hall/, '🏛️']
+];
+
+const CATEGORY_ICONS = {
+    academic: '🏫',
+    administrative: '🏢',
+    service: '🛎️',
+    dining: '☕',
+    sports: '⚽',
+    health: '🏥',
+    library: '📚',
+    gate: '🚪',
+    hall: '🏛️',
+    office: '🛎️'
+};
+
+function isGirlsDorm(name) {
+    const m = String(name).trim().match(/^([a-z]+)\s*-\s*([a-z0-9])$/i);
+    if (!m) return false;
+    const letters = GIRLS_DORMS[m[1].toLowerCase()];
+    return !!letters && letters.includes(m[2].toLowerCase());
+}
+
+function classify(loc) {
+    const name = String(loc.name || '').trim();
+    const lname = name.toLowerCase();
+    const cat = String(loc.category || '').trim();
+    const lcat = cat.toLowerCase();
+
+    // Dormitories: pink + 👩 for girls, blue + 👨 for men
+    if (lcat === 'dormitory') {
+        const girls = isGirlsDorm(name);
+        return {
+            emoji: girls ? '👩' : '👨',
+            color: girls ? COLORS.girls : COLORS.men,
+            tag: girls ? 'Girls Dorm' : "Men's Dorm",
+            girls: girls
+        };
+    }
+
+    let emoji = null;
+    for (const [re, icon] of NAME_ICONS) {
+        if (re.test(lname)) { emoji = icon; break; }
+    }
+    if (!emoji) emoji = CATEGORY_ICONS[lcat] || '📍';
+
+    const religious = emoji === '⛪';
+    let tag = cat ? cat.charAt(0).toUpperCase() + cat.slice(1) : (religious ? 'Religious' : 'Other');
+    let color = religious ? COLORS.Religious : (COLORS[tag] || COLORS.Other);
+
+    return { emoji: emoji, color: color, tag: tag, girls: false };
+}
+/* CLASSIFY END */
+
 /* =====================  MENU (circle icon)  ===================== */
 
 function openMenu() {
@@ -86,14 +205,46 @@ if (!hasDestParam) openMenu();
 
 /* =====================  LOAD DATA  ===================== */
 
+// Short names used by older bot buttons -> exact location name
+const DEST_ALIASES = {
+    'computing': 'Block-15 (School of Computing)',
+    'library': 'Block-32 Main Library'
+};
+
+function findRequestedDestination(query) {
+    const q = String(query || '').trim().toLowerCase();
+    const same = (loc, text) => loc.name.toLowerCase() === String(text).toLowerCase();
+
+    let hit = allLocations.find(loc => same(loc, q));                       // 1) exact name
+    if (!hit && DEST_ALIASES[q]) hit = allLocations.find(loc => same(loc, DEST_ALIASES[q])); // 2) alias
+    if (!hit) hit = allLocations.find(loc => loc.name.toLowerCase().includes(q));            // 3) partial
+    if (!hit) hit = allLocations.find(loc => same(loc, DEST_ALIASES['computing']));          // 4) default
+    return hit || allLocations[0];
+}
+
+const byName = (a, b) => a.name.localeCompare(b.name, 'en', { numeric: true, sensitivity: 'base' });
+
 async function loadLocations() {
     try {
         let response = await fetch(API_URL);
-        allLocations = await response.json();
+        const raw = await response.json();
+
+        // Clean data: trim names, keep only entries with real coordinates, A-Z order
+        allLocations = raw
+            .map(loc => ({ ...loc, name: String(loc.name || '').trim(), lat: Number(loc.lat), lng: Number(loc.lng) }))
+            .filter(loc => {
+                const ok = loc.name && isFinite(loc.lat) && isFinite(loc.lng);
+                if (!ok) console.warn('Skipped location with bad data:', loc);
+                return ok;
+            })
+            .sort(byName);
+
+        allLocations.forEach(loc => { loc._k = classify(loc); });
+
         renderList(allLocations);
         renderMarkers(allLocations);
 
-        let target = allLocations.find(loc => loc.name.toLowerCase().includes(requestedDest.toLowerCase())) || allLocations[0];
+        const target = findRequestedDestination(requestedDest);
         if (target) {
             setDestination(target);
         }
@@ -113,43 +264,53 @@ function escapeHtml(str) {
 
 /* =====================  MARKERS  ===================== */
 
+function makePinIcon(loc) {
+    const k = loc._k;
+    return L.divIcon({
+        className: 'poi-wrap',
+        html: `<div class="poi" style="--pin:${k.color}">
+                   <div class="poi-label${k.girls ? ' girls' : ''}">${escapeHtml(loc.name)}</div>
+                   <div class="poi-pin"><span>${k.emoji}</span></div>
+               </div>`,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34]
+    });
+}
+
 function renderMarkers(locations) {
-    markersMap.forEach((group) => map.removeLayer(group));
+    markersMap.forEach((marker) => map.removeLayer(marker));
     markersMap.clear();
 
+    const seen = {};
+    let placed = 0;
+
     locations.forEach(loc => {
-        const pin = L.marker([loc.lat, loc.lng]);
+        // Two places with identical coordinates would hide each other: nudge the pin ~6 m (display only)
+        const key = loc.lat.toFixed(6) + ',' + loc.lng.toFixed(6);
+        const n = seen[key] = (seen[key] || 0) + 1;
+        const lng = loc.lng + (n - 1) * 0.00006;
 
-        // Label is a DivIcon marker so it stays upright while the map rotates
-        const label = L.marker([loc.lat, loc.lng], {
-            icon: L.divIcon({
-                className: 'landmark-wrap',
-                html: `<div class="landmark-label">📍 ${escapeHtml(loc.name)}</div>`,
-                iconSize: [0, 0]
-            }),
-            zIndexOffset: 1000
-        });
-
-        pin.on('click', () => setDestination(loc));
-        label.on('click', () => setDestination(loc));
-
-        const group = L.layerGroup([pin, label]);
+        const marker = L.marker([loc.lat, lng], { icon: makePinIcon(loc), riseOnHover: true });
+        marker.on('click', () => setDestination(loc));
 
         if (showAllEnabled || (currentDestination && currentDestination.name === loc.name)) {
-            group.addTo(map);
+            marker.addTo(map);
         }
 
-        markersMap.set(loc.name, group);
+        markersMap.set(loc.name, marker);
+        placed++;
     });
+
+    if (placed !== locations.length) console.warn(`Only ${placed}/${locations.length} locations placed on the map`);
 }
 
 function toggleShowAll() {
     showAllEnabled = document.getElementById('show-all-toggle').checked;
-    markersMap.forEach((group, name) => {
+    markersMap.forEach((marker, name) => {
         if (showAllEnabled || (currentDestination && currentDestination.name === name)) {
-            if (!map.hasLayer(group)) group.addTo(map);
+            if (!map.hasLayer(marker)) marker.addTo(map);
         } else {
-            if (map.hasLayer(group)) map.removeLayer(group);
+            if (map.hasLayer(marker)) map.removeLayer(marker);
         }
     });
 }
@@ -187,10 +348,10 @@ function highlight(text, terms) {
 }
 
 /* Relevance score: every typed word must match somewhere, otherwise 0.
-   Exact name > name starts with > a word in the name starts with > name contains > category contains */
+   Exact name > name starts with > a word in the name starts with > name contains > category/type contains */
 function scoreLocation(loc, terms) {
     const name = String(loc.name || '').toLowerCase();
-    const cat = String(loc.category || '').toLowerCase();
+    const cat = (String(loc.category || '') + ' ' + (loc._k ? loc._k.tag : '')).toLowerCase();
     const words = name.split(/[^a-z0-9\u1200-\u137F]+/).filter(Boolean);
     let total = 0;
 
@@ -216,7 +377,7 @@ function renderList(locations, terms = []) {
     if (terms.length) {
         countEl.innerText = `${locations.length} result${locations.length === 1 ? '' : 's'} found`;
     } else {
-        countEl.innerText = `${locations.length} locations`;
+        countEl.innerText = `${locations.length} locations (A → Z)`;
     }
 
     if (!locations.length) {
@@ -228,18 +389,22 @@ function renderList(locations, terms = []) {
     }
 
     locations.forEach(loc => {
+        const k = loc._k || classify(loc);
         let item = document.createElement('div');
-        item.className = 'building-item';
+        item.className = 'building-item' + (k.girls ? ' girls' : '');
         item.innerHTML = `
-            <h4>${highlight(String(loc.name), terms)}</h4>
-            <span>${highlight(String(loc.category || ''), terms)}</span>
+            <div class="item-icon" style="--pin:${k.color}">${k.emoji}</div>
+            <div class="item-text">
+                <h4>${highlight(String(loc.name), terms)}</h4>
+                <span>${highlight(k.tag, terms)}</span>
+            </div>
         `;
         item.onclick = () => selectLocation(loc);
         listContainer.appendChild(item);
     });
 }
 
-// Ranked partial-word search (one word or several)
+// Ranked partial-word search (one word or several); empty search = full A-Z list
 function filterLocations() {
     const query = searchBox.value.toLowerCase().trim();
     if (!query) {
@@ -251,7 +416,7 @@ function filterLocations() {
     const results = allLocations
         .map(loc => ({ loc, score: scoreLocation(loc, terms) }))
         .filter(r => r.score > 0)
-        .sort((a, b) => b.score - a.score || String(a.loc.name).localeCompare(String(b.loc.name)))
+        .sort((a, b) => b.score - a.score || byName(a.loc, b.loc))
         .map(r => r.loc);
 
     renderList(results, terms);
@@ -277,11 +442,11 @@ function setDestination(loc) {
     currentDestination = loc;
     statusBanner.innerText = `🎯 Navigating to ${loc.name}`;
 
-    markersMap.forEach((group, name) => {
+    markersMap.forEach((marker, name) => {
         if (showAllEnabled || name === loc.name) {
-            if (!map.hasLayer(group)) group.addTo(map);
+            if (!map.hasLayer(marker)) marker.addTo(map);
         } else {
-            if (map.hasLayer(group)) map.removeLayer(group);
+            if (map.hasLayer(marker)) map.removeLayer(marker);
         }
     });
 
@@ -388,7 +553,7 @@ function applyFollowHeading() {
     // Priority: GPS heading while walking > phone compass > route direction
     const h = gpsHeading != null ? gpsHeading
         : compassHeading != null ? compassHeading
-            : routeBearing(here);
+        : routeBearing(here);
     if (h == null) return;
 
     smoothedHeading = smoothedHeading == null
@@ -446,7 +611,7 @@ function setFollow(on) {
             map.setView(userMarker.getLatLng(), Math.max(map.getZoom(), 19), { animate: true });
             applyFollowHeading();
         } else {
-            statusBanner.innerText = '📡 Waiting for GPS...';
+            statusBanner.innerText = '📡 Waiting for GPS... allow location & turn on GPS';
         }
     } else {
         smoothedHeading = null;
@@ -487,6 +652,7 @@ if (navigator.geolocation) {
 
             if (currentDestination) {
                 updateRoute(latLng, [currentDestination.lat, currentDestination.lng]);
+                statusBanner.innerText = `🎯 Navigating to ${currentDestination.name}`;
             }
 
             if (!firstFixDone) {
@@ -499,9 +665,15 @@ if (navigator.geolocation) {
         },
         (error) => {
             console.warn("GPS error:", error.message);
-            statusBanner.innerText = "⚠️ GPS signal unavailable. Tap any building to view.";
+            if (error.code === 1) {
+                statusBanner.innerText = "⚠️ Location permission denied. Allow location for this app in your phone/Telegram settings.";
+            } else if (error.code === 2) {
+                statusBanner.innerText = "⚠️ Location is off. Turn ON your phone's Location/GPS.";
+            } else {
+                statusBanner.innerText = "⚠️ GPS signal unavailable. Tap any building to view.";
+            }
         },
-        { enableHighAccuracy: true, maximumAge: 5000, timeout: 5000 }
+        { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     );
 }
 

@@ -189,6 +189,7 @@ input:checked+.slider:before {
     transform: translateX(16px);
 }
 
+/* ---------- Location list ---------- */
 .building-list {
     flex: 1;
     overflow-y: auto;
@@ -196,7 +197,10 @@ input:checked+.slider:before {
 }
 
 .building-item {
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
     margin-bottom: 8px;
     background: #f9f9f9;
     border-radius: 6px;
@@ -210,9 +214,39 @@ input:checked+.slider:before {
     border-color: #b2dfdb;
 }
 
+/* Girls dorms: pink card */
+.building-item.girls {
+    background: #fdf2f8;
+    border-color: #f9a8d4;
+}
+
+.building-item.girls:hover {
+    background: #fce7f3;
+    border-color: #f472b6;
+}
+
+.item-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--pin, #0f172a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    line-height: 1;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.item-text {
+    min-width: 0;
+}
+
 .building-item h4 {
     font-size: 0.9rem;
     color: #333;
+    word-break: break-word;
 }
 
 .building-item span {
@@ -222,23 +256,55 @@ input:checked+.slider:before {
     text-transform: uppercase;
 }
 
+.building-item.girls span {
+    color: #be185d;
+}
+
 /* ---------- Map ---------- */
 .leaflet-tile-pane {
     filter: saturate(1.1) contrast(1.1);
 }
 
-/* Landmark label (a marker, so it stays upright when the map rotates) */
-.landmark-wrap {
+/* Location pins: coloured teardrop + emoji icon + name label (stays upright when the map rotates) */
+.poi-wrap {
     background: none;
     border: none;
 }
 
-.landmark-label {
+.poi {
+    position: relative;
+    width: 34px;
+    height: 34px;
+}
+
+.poi-pin {
     position: absolute;
-    left: 0;
+    left: 3px;
     top: 0;
-    transform: translate(-50%, -100%);
-    margin-top: -44px;
+    width: 28px;
+    height: 28px;
+    background: var(--pin, #0f172a);
+    border: 2px solid #ffffff;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.poi-pin span {
+    transform: rotate(45deg);
+    font-size: 14px;
+    line-height: 1;
+}
+
+.poi-label {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    margin-bottom: 4px;
     white-space: nowrap;
     background-color: #0f172a;
     color: #ffffff;
@@ -248,7 +314,12 @@ input:checked+.slider:before {
     font-weight: bold;
     font-size: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    cursor: pointer;
+}
+
+/* Girls dorm label: pink */
+.poi-label.girls {
+    background-color: #831843;
+    border-color: #f472b6;
 }
 
 #status-banner {
