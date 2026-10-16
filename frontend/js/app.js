@@ -1,7 +1,7 @@
 const tg = window.Telegram && window.Telegram.WebApp;
 if (tg) {
     tg.expand();
-    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes(); // stops map drags from closing the Mini App
+    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
 }
 
 const statusBanner = document.getElementById('status-banner');
@@ -16,14 +16,12 @@ function getURLParam(key) {
 const hasDestParam = getURLParam('dest') !== null;
 const requestedDest = getURLParam('dest') || 'Computing';
 
-/* If the map turns the wrong way on your phone, change this to -1 */
 const ROTATION_SIGN = 1;
 
 const dduCenter = [9.6200, 41.8405];
 const map = L.map('map', {
     zoomControl: true,
     maxZoom: 20,
-    // leaflet-rotate options (ignored if the plugin fails to load)
     rotate: true,
     bearing: 0,
     touchRotate: false,
@@ -31,8 +29,6 @@ const map = L.map('map', {
     rotateControl: false
 }).setView(dduCenter, 17);
 
-/* lyrs=s = satellite imagery ONLY (no Google place names / POIs / labels),
-   so wrongly named Google locations are hidden. Our own labels remain. */
 L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
     maxZoom: 20,
     subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
@@ -47,7 +43,6 @@ let routingControl = null;
 let currentDestination = null;
 let showAllEnabled = true;
 
-// route / follow state
 let routeCoords = [];
 let lastRouteOrigin = null;
 let pendingFit = false;
@@ -64,10 +59,6 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
     ? 'http://127.0.0.1:8000/api/locations'
     : '/api/locations';
 
-/* =====================  ICONS, COLOURS, GIRLS / MEN DORMS  ===================== */
-/* CLASSIFY START */
-
-// Girls dorms: Twins P,Q,R,S,M,L,H  and  Hayat B,C,D  (every other dorm = men's dorm)
 const GIRLS_DORMS = {
     twins: 'pqrsmlh',
     hayat: 'bcd',
@@ -75,8 +66,8 @@ const GIRLS_DORMS = {
 };
 
 const COLORS = {
-    girls: '#ec4899',      // pink
-    men: '#2563eb',        // blue
+    girls: '#ec4899',
+    men: '#2563eb',
     Academic: '#0f766e',
     Administrative: '#7c3aed',
     Service: '#d97706',
@@ -91,7 +82,6 @@ const COLORS = {
     Other: '#0f172a'
 };
 
-// First matching rule wins (matched against the lower-case name)
 const NAME_ICONS = [
     [/hospital|clinic/, '🏥'],
     [/church|ቤተ ክርስቲያን|fellowship|mkc/, '⛪'],
@@ -158,7 +148,6 @@ function classify(loc) {
     const cat = String(loc.category || '').trim();
     const lcat = cat.toLowerCase();
 
-    // Dormitories: pink + 👩 for girls, blue + 👨 for men
     if (lcat === 'dormitory') {
         const girls = isGirlsDorm(name);
         return {
@@ -181,9 +170,6 @@ function classify(loc) {
 
     return { emoji: emoji, color: color, tag: tag, girls: false };
 }
-/* CLASSIFY END */
-
-/* =====================  MENU (circle icon)  ===================== */
 
 function openMenu() {
     document.body.classList.add('menu-open');
@@ -200,12 +186,8 @@ function toggleMenu() {
     document.body.classList.contains('menu-open') ? closeMenu() : openMenu();
 }
 
-// Full map launch (no ?dest=) starts with the menu open; direct destinations start hidden
 if (!hasDestParam) openMenu();
 
-/* =====================  LOAD DATA  ===================== */
-
-// Short names used by older bot buttons -> exact location name
 const DEST_ALIASES = {
     'computing': 'Block-15 (School of Computing)',
     'library': 'Block-32 Main Library'
@@ -215,10 +197,10 @@ function findRequestedDestination(query) {
     const q = String(query || '').trim().toLowerCase();
     const same = (loc, text) => loc.name.toLowerCase() === String(text).toLowerCase();
 
-    let hit = allLocations.find(loc => same(loc, q));                       // 1) exact name
-    if (!hit && DEST_ALIASES[q]) hit = allLocations.find(loc => same(loc, DEST_ALIASES[q])); // 2) alias
-    if (!hit) hit = allLocations.find(loc => loc.name.toLowerCase().includes(q));            // 3) partial
-    if (!hit) hit = allLocations.find(loc => same(loc, DEST_ALIASES['computing']));          // 4) default
+    let hit = allLocations.find(loc => same(loc, q));
+    if (!hit && DEST_ALIASES[q]) hit = allLocations.find(loc => same(loc, DEST_ALIASES[q]));
+    if (!hit) hit = allLocations.find(loc => loc.name.toLowerCase().includes(q));
+    if (!hit) hit = allLocations.find(loc => same(loc, DEST_ALIASES['computing']));
     return hit || allLocations[0];
 }
 
@@ -229,12 +211,10 @@ async function loadLocations() {
         let response = await fetch(API_URL);
         const raw = await response.json();
 
-        // Clean data: trim names, keep only entries with real coordinates, A-Z order
         allLocations = raw
             .map(loc => ({ ...loc, name: String(loc.name || '').trim(), lat: Number(loc.lat), lng: Number(loc.lng) }))
             .filter(loc => {
                 const ok = loc.name && isFinite(loc.lat) && isFinite(loc.lng);
-                if (!ok) console.warn('Skipped location with bad data:', loc);
                 return ok;
             })
             .sort(byName);
@@ -262,8 +242,6 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
-/* =====================  MARKERS  ===================== */
-
 function makePinIcon(loc) {
     const k = loc._k;
     return L.divIcon({
@@ -285,7 +263,6 @@ function renderMarkers(locations) {
     let placed = 0;
 
     locations.forEach(loc => {
-        // Two places with identical coordinates would hide each other: nudge the pin ~6 m (display only)
         const key = loc.lat.toFixed(6) + ',' + loc.lng.toFixed(6);
         const n = seen[key] = (seen[key] || 0) + 1;
         const lng = loc.lng + (n - 1) * 0.00006;
@@ -300,8 +277,6 @@ function renderMarkers(locations) {
         markersMap.set(loc.name, marker);
         placed++;
     });
-
-    if (placed !== locations.length) console.warn(`Only ${placed}/${locations.length} locations placed on the map`);
 }
 
 function toggleShowAll() {
@@ -314,8 +289,6 @@ function toggleShowAll() {
         }
     });
 }
-
-/* =====================  SEARCH  ===================== */
 
 function highlight(text, terms) {
     if (!terms.length) return escapeHtml(text);
@@ -347,8 +320,6 @@ function highlight(text, terms) {
     return out + escapeHtml(text.slice(pos));
 }
 
-/* Relevance score: every typed word must match somewhere, otherwise 0.
-   Exact name > name starts with > a word in the name starts with > name contains > category/type contains */
 function scoreLocation(loc, terms) {
     const name = String(loc.name || '').toLowerCase();
     const cat = (String(loc.category || '') + ' ' + (loc._k ? loc._k.tag : '')).toLowerCase();
@@ -404,7 +375,6 @@ function renderList(locations, terms = []) {
     });
 }
 
-// Ranked partial-word search (one word or several); empty search = full A-Z list
 function filterLocations() {
     const query = searchBox.value.toLowerCase().trim();
     if (!query) {
@@ -422,7 +392,6 @@ function filterLocations() {
     renderList(results, terms);
 }
 
-// Enter key = go to the best match
 function onSearchKey(e) {
     if (e.key === 'Enter' && lastResults.length) {
         e.preventDefault();
@@ -430,13 +399,10 @@ function onSearchKey(e) {
     }
 }
 
-// Picking from the list: set destination and hide the menu so the map is clear
 function selectLocation(loc) {
     setDestination(loc);
     closeMenu();
 }
-
-/* =====================  DESTINATION & ROUTE  ===================== */
 
 function setDestination(loc) {
     currentDestination = loc;
@@ -470,7 +436,6 @@ function updateRoute(startLatLng, destCoords, force = false) {
 
     const start = L.latLng(startLatLng.lat, startLatLng.lng);
 
-    // Don't hammer the routing server: only recalculate after moving 15 m (or a new destination)
     if (routingControl && !force && lastRouteOrigin && start.distanceTo(lastRouteOrigin) < 15) return;
     lastRouteOrigin = start;
 
@@ -487,10 +452,10 @@ function updateRoute(startLatLng, destCoords, force = false) {
             addWaypoints: false,
             draggableWaypoints: false,
             showAlternatives: false,
-            fitSelectedRoutes: false,      // we control zoom ourselves (needed for follow mode)
+            fitSelectedRoutes: false,
             collapsible: true,
             position: 'bottomleft',
-            createMarker: () => null,      // our own markers/user dot are enough
+            createMarker: () => null,
             lineOptions: {
                 styles: [{ color: '#38bdf8', opacity: 0.9, weight: 6 }]
             }
@@ -513,8 +478,6 @@ function updateRoute(startLatLng, destCoords, force = false) {
     }
 }
 
-/* =====================  DIRECTION / MAP ROTATION  ===================== */
-
 function angleDiff(a, b) {
     return ((a - b + 540) % 360) - 180;
 }
@@ -527,7 +490,6 @@ function bearingBetween(a, b) {
     return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
 }
 
-// Direction of the next point on the walking route (~20 m ahead), else straight to the destination
 function routeBearing(from) {
     if (routeCoords.length) {
         let idx = 0, min = Infinity;
@@ -545,15 +507,13 @@ function routeBearing(from) {
     return null;
 }
 
-// Rotate the map so the direction you are heading points UP the screen
 function applyFollowHeading() {
     if (!followMode || !userMarker || typeof map.setBearing !== 'function') return;
 
     const here = userMarker.getLatLng();
-    // Priority: GPS heading while walking > phone compass > route direction
     const h = gpsHeading != null ? gpsHeading
         : compassHeading != null ? compassHeading
-        : routeBearing(here);
+            : routeBearing(here);
     if (h == null) return;
 
     smoothedHeading = smoothedHeading == null
@@ -569,9 +529,9 @@ function applyFollowHeading() {
 function onOrient(e) {
     let heading = null;
     if (typeof e.webkitCompassHeading === 'number') {
-        heading = e.webkitCompassHeading;                       // iOS
+        heading = e.webkitCompassHeading;
     } else if (e.absolute && typeof e.alpha === 'number') {
-        heading = (360 - e.alpha) % 360;                        // Android
+        heading = (360 - e.alpha) % 360;
     }
     if (heading == null) return;
 
@@ -590,7 +550,7 @@ async function enableCompass() {
     try {
         if (typeof DeviceOrientationEvent !== 'undefined' &&
             typeof DeviceOrientationEvent.requestPermission === 'function') {
-            const result = await DeviceOrientationEvent.requestPermission(); // iOS needs a tap
+            const result = await DeviceOrientationEvent.requestPermission();
             if (result !== 'granted') { compassStarted = false; return; }
         }
         window.addEventListener('deviceorientationabsolute', onOrient, true);
@@ -616,7 +576,7 @@ function setFollow(on) {
     } else {
         smoothedHeading = null;
         lastAppliedHeading = null;
-        if (typeof map.setBearing === 'function') map.setBearing(0); // back to north-up
+        if (typeof map.setBearing === 'function') map.setBearing(0);
     }
 }
 
@@ -624,12 +584,9 @@ function toggleFollow() {
     setFollow(!followMode);
 }
 
-// If the user drags the map to look around, stop following (tap 🧭 to resume)
 map.on('dragstart', () => {
     if (followMode) setFollow(false);
 });
-
-/* =====================  GPS  ===================== */
 
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(
@@ -657,7 +614,7 @@ if (navigator.geolocation) {
 
             if (!firstFixDone) {
                 firstFixDone = true;
-                if (currentDestination) setFollow(true); // start navigation: follow + rotate automatically
+                if (currentDestination) setFollow(true);
             } else if (followMode) {
                 map.setView(latLng, map.getZoom(), { animate: true });
                 applyFollowHeading();

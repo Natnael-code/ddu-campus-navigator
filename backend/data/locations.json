@@ -1,159 +1,27 @@
 [
     {
-        "name": "Hospital",
-        "category": "Health",
-        "lat": 9.621890823368489,
-        "lng": 41.84162593901566
+        "name": "Basketball Court",
+        "category": "Sports",
+        "lat": 9.617160348508392,
+        "lng": 41.84100974356098
     },
     {
-        "name": "Secondary school",
+        "name": "Bewanaw Gate",
+        "category": "Gate",
+        "lat": 9.616001236964811,
+        "lng": 41.837581656766844
+    },
+    {
+        "name": "Block-1 Law (Moot Court)",
         "category": "Academic",
-        "lat": 9.61773867912141,
-        "lng": 41.837740054764794
+        "lat": 9.619448016218467,
+        "lng": 41.83974574695018
     },
     {
-        "name": "Student service",
-        "category": "Administrative",
-        "lat": 9.618039256616521,
-        "lng": 41.83746153825415
-    },
-    {
-        "name": "Day care",
-        "category": "Service",
-        "lat": 9.618009569962233,
-        "lng": 41.83771747234502
-    },
-    {
-        "name": "Block-45 (President Office)",
-        "category": "Administrative",
-        "lat": 9.617556848161309,
-        "lng": 41.838139010847605
-    },
-    {
-        "name": "Block-44 (Registrar Office)",
-        "category": "Administrative",
-        "lat": 9.618180268188814,
-        "lng": 41.8384852746176
-    },
-    {
-        "name": "Red Hall",
-        "category": "Hall",
-        "lat": 9.618106051580662,
-        "lng": 41.838553021885694
-    },
-    {
-        "name": "Brown Hall",
-        "category": "Hall",
-        "lat": 9.61825077395441,
-        "lng": 41.83856431309559
-    },
-    {
-        "name": "Block-43 (Staff Cafe)",
-        "category": "Dining",
-        "lat": 9.618480845299626,
-        "lng": 41.83842129111068
-    },
-    {
-        "name": "Book store",
-        "category": "Service",
-        "lat": 9.619430815641135,
-        "lng": 41.83907994502848
-    },
-    {
-        "name": "Block-18",
+        "name": "Block-10 (Political Science & International Relations)",
         "category": "Academic",
-        "lat": 9.619481757162818,
-        "lng": 41.83872995605419
-    },
-    {
-        "name": "Commercial Bank of Ethiopia",
-        "category": "Service",
-        "lat": 9.619743847577876,
-        "lng": 41.83933558963927
-    },
-    {
-        "name": "Block-19",
-        "category": "Academic",
-        "lat": 9.619743847577876,
-        "lng": 41.838604440287845
-    },
-    {
-        "name": "Block-54 (Electrical & Computer Engineering)",
-        "category": "Academic",
-        "lat": 9.620228066851821,
-        "lng": 41.83833856779642
-    },
-    {
-        "name": "Block-20",
-        "category": "Academic",
-        "lat": 9.620113953381674,
-        "lng": 41.83856388869617
-    },
-    {
-        "name": "Block-53 (workshop)",
-        "category": "Academic",
-        "lat": 9.62056344023575,
-        "lng": 41.83832424987231
-    },
-    {
-        "name": "Block-52 (workshop)",
-        "category": "Academic",
-        "lat": 9.620852418950204,
-        "lng": 41.83832645996242
-    },
-    {
-        "name": "Block-51 (workshop)",
-        "category": "Academic",
-        "lat": 9.621148447985309,
-        "lng": 41.838323893705564
-    },
-    {
-        "name": "Block-21 (School of Architecture)",
-        "category": "Academic",
-        "lat": 9.62064611542094,
-        "lng": 41.83875553143095
-    },
-    {
-        "name": "Block-14",
-        "category": "Academic",
-        "lat": 9.620646150035947,
-        "lng": 41.839298969590644
-    },
-    {
-        "name": "Cost Sharing",
-        "category": "Administrative",
-        "lat": 9.620444866202273,
-        "lng": 41.83911778199843
-    },
-    {
-        "name": "Block-22 (School of Textile & Fashion Design)",
-        "category": "Academic",
-        "lat": 9.621237603289895,
-        "lng": 41.83890412192802
-    },
-    {
-        "name": "Block-23 (Chemical & Bio Engineering)",
-        "category": "Academic",
-        "lat": 9.621784688958543,
-        "lng": 41.83889173419513
-    },
-    {
-        "name": "Block-50 (workshop)",
-        "category": "Academic",
-        "lat": 9.62207579638883,
-        "lng": 41.838707195993614
-    },
-    {
-        "name": "Block-24 (Natural Science Laboratory)",
-        "category": "Academic",
-        "lat": 9.622212813839536,
-        "lng": 41.83936313253098
-    },
-    {
-        "name": "Block-26 (DDU STEM Center)",
-        "category": "Academic",
-        "lat": 9.621937977436486,
-        "lng": 41.839193314408355
+        "lat": 9.621807918226882,
+        "lng": 41.83959215490232
     },
     {
         "name": "Block-12",
@@ -168,22 +36,274 @@
         "lng": 41.83910430335873
     },
     {
-        "name": "Block-10 (Political Science & International Relations)",
+        "name": "Block-14",
         "category": "Academic",
-        "lat": 9.621807918226882,
-        "lng": 41.83959215490232
+        "lat": 9.620646150035947,
+        "lng": 41.839298969590644
     },
     {
-        "name": "Block-9 ",
+        "name": "Block-15 (School of Computing)",
+        "category": "Academic",
+        "lat": 9.620206741554759,
+        "lng": 41.83919871449885
+    },
+    {
+        "name": "Block-16",
+        "category": "Academic",
+        "lat": 9.619839412381635,
+        "lng": 41.83928102611216
+    },
+    {
+        "name": "Block-17",
+        "category": "Academic",
+        "lat": 9.619489140143626,
+        "lng": 41.83918126871178
+    },
+    {
+        "name": "Block-18",
+        "category": "Academic",
+        "lat": 9.619481757162818,
+        "lng": 41.83872995605419
+    },
+    {
+        "name": "Block-19",
+        "category": "Academic",
+        "lat": 9.619743847577876,
+        "lng": 41.838604440287845
+    },
+    {
+        "name": "Block-2",
+        "category": "Academic",
+        "lat": 9.619873582561139,
+        "lng": 41.8396189369197
+    },
+    {
+        "name": "Block-20",
+        "category": "Academic",
+        "lat": 9.620113953381674,
+        "lng": 41.83856388869617
+    },
+    {
+        "name": "Block-21 (School of Architecture)",
+        "category": "Academic",
+        "lat": 9.62064611542094,
+        "lng": 41.83875553143095
+    },
+    {
+        "name": "Block-22 (School of Textile & Fashion Design)",
+        "category": "Academic",
+        "lat": 9.621237603289895,
+        "lng": 41.83890412192802
+    },
+    {
+        "name": "Block-23 (Chemical & Bio Engineering)",
+        "category": "Academic",
+        "lat": 9.621784688958543,
+        "lng": 41.83889173419513
+    },
+    {
+        "name": "Block-24 (Natural Science Laboratory)",
+        "category": "Academic",
+        "lat": 9.622212813839536,
+        "lng": 41.83936313253098
+    },
+    {
+        "name": "Block-25",
+        "category": "Academic",
+        "lat": 9.622172857327433,
+        "lng": 41.83970679951352
+    },
+    {
+        "name": "Block-26 (College of Medicine and Health Science)",
+        "category": "Academic",
+        "lat": 9.62223298483145,
+        "lng": 41.840164190672354
+    },
+    {
+        "name": "Block-26 (DDU STEM Center)",
+        "category": "Academic",
+        "lat": 9.621937977436486,
+        "lng": 41.839193314408355
+    },
+    {
+        "name": "Block-27 (School of Post Graduates)",
+        "category": "Academic",
+        "lat": 9.622237995456304,
+        "lng": 41.840758799178836
+    },
+    {
+        "name": "Block-28",
+        "category": "Academic",
+        "lat": 9.622578515093936,
+        "lng": 41.84070296434256
+    },
+    {
+        "name": "Block-29",
+        "category": "Academic",
+        "lat": 9.622482737191158,
+        "lng": 41.84017922774839
+    },
+    {
+        "name": "Block-3",
+        "category": "Academic",
+        "lat": 9.620168300149176,
+        "lng": 41.83974890261687
+    },
+    {
+        "name": "Block-30",
+        "category": "Academic",
+        "lat": 9.62248690144835,
+        "lng": 41.83968928061192
+    },
+    {
+        "name": "Block-32 Main Library",
+        "category": "Library",
+        "lat": 9.621282888012514,
+        "lng": 41.840696881890466
+    },
+    {
+        "name": "Block-33 School of Natural Science",
+        "category": "Academic",
+        "lat": 9.62156156041216,
+        "lng": 41.84112471211558
+    },
+    {
+        "name": "Block-34 School of social Science",
+        "category": "Academic",
+        "lat": 9.621265932838574,
+        "lng": 41.84115520485908
+    },
+    {
+        "name": "Block-35",
+        "category": "Academic",
+        "lat": 9.620843904549522,
+        "lng": 41.84116030119187
+    },
+    {
+        "name": "Block-36 institution of technology",
+        "category": "Academic",
+        "lat": 9.620839425123496,
+        "lng": 41.84085135499093
+    },
+    {
+        "name": "Block-37 College of Business and Economics",
+        "category": "Academic",
+        "lat": 9.620830466271249,
+        "lng": 41.84048788887219
+    },
+    {
+        "name": "Block-4",
+        "category": "Academic",
+        "lat": 9.620449086153675,
+        "lng": 41.839623416297556
+    },
+    {
+        "name": "Block-43 (Staff Cafe)",
+        "category": "Dining",
+        "lat": 9.618480845299626,
+        "lng": 41.83842129111068
+    },
+    {
+        "name": "Block-44 (Registrar Office)",
+        "category": "Administrative",
+        "lat": 9.618180268188814,
+        "lng": 41.8384852746176
+    },
+    {
+        "name": "Block-45 (President Office)",
+        "category": "Administrative",
+        "lat": 9.617556848161309,
+        "lng": 41.838139010847605
+    },
+    {
+        "name": "Block-5",
+        "category": "Academic",
+        "lat": 9.620783237130075,
+        "lng": 41.839723847556364
+    },
+    {
+        "name": "Block-50 (workshop)",
+        "category": "Academic",
+        "lat": 9.62207579638883,
+        "lng": 41.838707195993614
+    },
+    {
+        "name": "Block-51 (workshop)",
+        "category": "Academic",
+        "lat": 9.621148447985309,
+        "lng": 41.838323893705564
+    },
+    {
+        "name": "Block-52 (workshop)",
+        "category": "Academic",
+        "lat": 9.620852418950204,
+        "lng": 41.83832645996242
+    },
+    {
+        "name": "Block-53 (workshop)",
+        "category": "Academic",
+        "lat": 9.62056344023575,
+        "lng": 41.83832424987231
+    },
+    {
+        "name": "Block-54 (Electrical & Computer Engineering)",
+        "category": "Academic",
+        "lat": 9.620228066851821,
+        "lng": 41.83833856779642
+    },
+    {
+        "name": "Block-6",
+        "category": "Academic",
+        "lat": 9.621291846852762,
+        "lng": 41.840160769365305
+    },
+    {
+        "name": "Block-7",
+        "category": "Academic",
+        "lat": 9.621556132533211,
+        "lng": 41.840365219057105
+    },
+    {
+        "name": "Block-8",
+        "category": "Academic",
+        "lat": 9.621854347589757,
+        "lng": 41.840059606262734
+    },
+    {
+        "name": "Block-9",
         "category": "Academic",
         "lat": 9.621269563494259,
         "lng": 41.839699571753926
     },
     {
-        "name": "Business & Incubation Center",
+        "name": "Book store",
+        "category": "Service",
+        "lat": 9.619430815641135,
+        "lng": 41.83907994502848
+    },
+    {
+        "name": "Brown Hall",
+        "category": "Hall",
+        "lat": 9.61825077395441,
+        "lng": 41.83856431309559
+    },
+    {
+        "name": "Commercial Bank of Ethiopia",
+        "category": "Service",
+        "lat": 9.619743847577876,
+        "lng": 41.83933558963927
+    },
+    {
+        "name": "Cost Sharing",
         "category": "Administrative",
-        "lat": 9.621741629080766,
-        "lng": 41.84063596930935
+        "lat": 9.620444866202273,
+        "lng": 41.83911778199843
+    },
+    {
+        "name": "Day care",
+        "category": "Service",
+        "lat": 9.618009569962233,
+        "lng": 41.83771747234502
     },
     {
         "name": "DDU Enterprise Cafe",
@@ -198,10 +318,238 @@
         "lng": 41.84186918027339
     },
     {
-        "name": "Basketball Court",
-        "category": "Sports",
-        "lat": 9.617160348508392,
-        "lng": 41.84100974356098
+        "name": "FBE Library",
+        "category": "Library",
+        "lat": 9.618770702177324,
+        "lng": 41.83950359117141
+    },
+    {
+        "name": "Fresh's Cafe",
+        "category": "Dining",
+        "lat": 9.620128313176647,
+        "lng": 41.84023225767541
+    },
+    {
+        "name": "Hayat-B",
+        "category": "Dormitory",
+        "lat": 9.619988430981408,
+        "lng": 41.841984432530744
+    },
+    {
+        "name": "Hayat-C",
+        "category": "Dormitory",
+        "lat": 9.619689492183372,
+        "lng": 41.841969642172664
+    },
+    {
+        "name": "Hayat-D",
+        "category": "Dormitory",
+        "lat": 9.619427009118343,
+        "lng": 41.84194745663554
+    },
+    {
+        "name": "Hospital",
+        "category": "Health",
+        "lat": 9.621890823368489,
+        "lng": 41.84162593901566
+    },
+    {
+        "name": "ICT Building (Block 41)",
+        "category": "Academic",
+        "lat": 9.61849904004614,
+        "lng": 41.83994239239558
+    },
+    {
+        "name": "Mermersa Gate",
+        "category": "Gate",
+        "lat": 9.619735945875444,
+        "lng": 41.83706653686665
+    },
+    {
+        "name": "Peace Forum",
+        "category": "Service",
+        "lat": 9.622209533756672,
+        "lng": 41.83970616302493
+    },
+    {
+        "name": "Post Office",
+        "category": "Service",
+        "lat": 9.621525482178704,
+        "lng": 41.841218855632405
+    },
+    {
+        "name": "Red Hall",
+        "category": "Hall",
+        "lat": 9.618106051580662,
+        "lng": 41.838553021885694
+    },
+    {
+        "name": "Secondary school",
+        "category": "Academic",
+        "lat": 9.61773867912141,
+        "lng": 41.837740054764794
+    },
+    {
+        "name": "Senior's Cafe",
+        "category": "Dining",
+        "lat": 9.620112573315652,
+        "lng": 41.84101451136999
+    },
+    {
+        "name": "Student Police",
+        "category": "Service",
+        "lat": 9.619904553206892,
+        "lng": 41.83953018344427
+    },
+    {
+        "name": "Student Service",
+        "category": "Administrative",
+        "lat": 9.618039256616521,
+        "lng": 41.83746153825415
+    },
+    {
+        "name": "block-31 Business & Incubation Center",
+        "category": "Administrative",
+        "lat": 9.621741629080766,
+        "lng": 41.84063596930935
+    },
+    {
+        "name": "dormitory office",
+        "category": "office",
+        "lat": 9.620265495972788,
+        "lng": 41.84201031565739
+    },
+    {
+        "name": "Twins-A",
+        "category": "Dormitory",
+        "lat": 9.621721857753192,
+        "lng": 41.84313268465335
+    },
+    {
+        "name": "Twins-B",
+        "category": "Dormitory",
+        "lat": 9.622063709168444,
+        "lng": 41.84311643172613
+    },
+    {
+        "name": "Twins-C",
+        "category": "Dormitory",
+        "lat": 9.62153094685261,
+        "lng": 41.84359792968976
+    },
+    {
+        "name": "Twins-D",
+        "category": "Dormitory",
+        "lat": 9.619273893897846,
+        "lng": 41.84247621193533
+    },
+    {
+        "name": "Twins-E",
+        "category": "Dormitory",
+        "lat": 9.622464225198357,
+        "lng": 41.84356080831331
+    },
+    {
+        "name": "Twins-F",
+        "category": "Dormitory",
+        "lat": 9.620590403660128,
+        "lng": 41.84165751936084
+    },
+    {
+        "name": "Twins-G",
+        "category": "Dormitory",
+        "lat": 9.620625115405462,
+        "lng": 41.84363969123824
+    },
+    {
+        "name": "Twins-H",
+        "category": "Dormitory",
+        "lat": 9.619977494195627,
+        "lng": 41.84246881675628
+    },
+    {
+        "name": "Twins-I",
+        "category": "Dormitory",
+        "lat": 9.620812686754086,
+        "lng": 41.84412690931571
+    },
+    {
+        "name": "Twins-J",
+        "category": "Dormitory",
+        "lat": 9.620446693764718,
+        "lng": 41.8441686708642
+    },
+    {
+        "name": "Twins-K",
+        "category": "Dormitory",
+        "lat": 9.620273809870717,
+        "lng": 41.84314074239916
+    },
+    {
+        "name": "Twins-L",
+        "category": "Dormitory",
+        "lat": 9.619642099417685,
+        "lng": 41.84246881675628
+    },
+    {
+        "name": "Twins-M",
+        "category": "Dormitory",
+        "lat": 9.619273893897846,
+        "lng": 41.84247621193533
+    },
+    {
+        "name": "Twins-N",
+        "category": "Dormitory",
+        "lat": 9.621338800982008,
+        "lng": 41.844177951208316
+    },
+    {
+        "name": "Twins-P",
+        "category": "Dormitory",
+        "lat": 9.618978600072342,
+        "lng": 41.841965944581375
+    },
+    {
+        "name": "Twins-Q",
+        "category": "Dormitory",
+        "lat": 9.619237437883957,
+        "lng": 41.84147046758551
+    },
+    {
+        "name": "Twins-R",
+        "category": "Dormitory",
+        "lat": 9.619707720161303,
+        "lng": 41.8415222338388
+    },
+    {
+        "name": "Twins-S",
+        "category": "Dormitory",
+        "lat": 9.62016183321865,
+        "lng": 41.84167506486625
+    },
+    {
+        "name": "Twins-T",
+        "category": "Dormitory",
+        "lat": 9.621713942819234,
+        "lng": 41.844191871732896
+    },
+    {
+        "name": "Twins-U",
+        "category": "Dormitory",
+        "lat": 9.622034185505903,
+        "lng": 41.84420579224906
+    },
+    {
+        "name": "Twins-V",
+        "category": "Dormitory",
+        "lat": 9.622455075432592,
+        "lng": 41.84417795121673
+    },
+    {
+        "name": "Toni Gate",
+        "category": "Gate",
+        "lat": 9.616253371528778,
+        "lng": 41.840807942194346
     },
     {
         "name": "White House-A",
@@ -282,312 +630,6 @@
         "lng": 41.843630410894136
     },
     {
-        "name": "Twins-A",
-        "category": "Dormitory",
-        "lat": 9.621721857753192,
-        "lng": 41.84313268465335
-    },
-    {
-        "name": "Twins-B",
-        "category": "Dormitory",
-        "lat": 9.622063709168444,
-        "lng": 41.84311643172613
-    },
-    {
-        "name": "Twins-C",
-        "category": "Dormitory",
-        "lat": 9.62153094685261,
-        "lng": 41.84359792968976
-    },
-    {
-        "name": "Twins-D",
-        "category": "Dormitory",
-        "lat": 9.621924388038078,
-        "lng": 41.84357472882947
-    },
-    {
-        "name": "Twins-E",
-        "category": "Dormitory",
-        "lat": 9.622464225198357,
-        "lng": 41.84356080831331
-    },
-    {
-        "name": "Twins-F",
-        "category": "Dormitory",
-        "lat": 9.620590403660128,
-        "lng": 41.84165751936084
-    },
-    {
-        "name": "Twins-G",
-        "category": "Dormitory",
-        "lat": 9.620625115405462,
-        "lng": 41.84363969123824
-    },
-    {
-        "name": "Twins-I",
-        "category": "Dormitory",
-        "lat": 9.620812686754086,
-        "lng": 41.84412690931571
-    },
-    {
-        "name": "Twins-J",
-        "category": "Dormitory",
-        "lat": 9.620446693764718,
-        "lng": 41.8441686708642
-    },
-    {
-        "name": "Twins-K",
-        "category": "Dormitory",
-        "lat": 9.620273809870717,
-        "lng": 41.84314074239916
-    },
-    {
-        "name": "Twins-N",
-        "category": "Dormitory",
-        "lat": 9.621338800982008,
-        "lng": 41.844177951208316
-    },
-    {
-        "name": "Twins-S",
-        "category": "Dormitory",
-        "lat": 9.62016183321865,
-        "lng": 41.84167506486625
-    },
-    {
-        "name": "Twins-T",
-        "category": "Dormitory",
-        "lat": 9.621713942819234,
-        "lng": 41.844191871732896
-    },
-    {
-        "name": "Twins-U",
-        "category": "Dormitory",
-        "lat": 9.622034185505903,
-        "lng": 41.84420579224906
-    },
-    {
-        "name": "Twins-V",
-        "category": "Dormitory",
-        "lat": 9.622455075432592,
-        "lng": 41.84417795121673
-    },
-    {
-        "name": "Techno / Central Library",
-        "category": "Library",
-        "lat": 9.6188376421413,
-        "lng": 41.84116617280057
-    },
-    {
-        "name": "Senior's Cafe",
-        "category": "Dining",
-        "lat": 9.620112573315652,
-        "lng": 41.84101451136999
-    },
-    {
-        "name": "Fresh's Cafe",
-        "category": "Dining",
-        "lat": 9.620128313176647,
-        "lng": 41.84023225767541
-    },
-    {
-        "name": "FBE Library",
-        "category": "Library",
-        "lat": 9.618770702177324,
-        "lng": 41.83950359117141
-    },
-    {
-        "name": "ICT Building (Block 41)",
-        "category": "Academic",
-        "lat": 9.61849904004614,
-        "lng": 41.83994239239558
-    },
-    {
-        "name": "Block-1 Law (Moot Court)",
-        "category": "Academic",
-        "lat": 9.619448016218467,
-        "lng": 41.83974574695018
-    },
-    {
-        "name": "Block-17",
-        "category": "Academic",
-        "lat": 9.619489140143626,
-        "lng": 41.83918126871178
-    },
-    {
-        "name": "Block-16",
-        "category": "Academic",
-        "lat": 9.619839412381635,
-        "lng": 41.83928102611216
-    },
-    {
-        "name": "Block-15 (School of Computing)",
-        "category": "Academic",
-        "lat": 9.620206741554759,
-        "lng": 41.83919871449885
-    },
-    {
-        "name": "Block-2",
-        "category": "Academic",
-        "lat": 9.619873582561139,
-        "lng": 41.8396189369197
-    },
-    {
-        "name": "Block-3",
-        "category": "Academic",
-        "lat": 9.620168300149176,
-        "lng": 41.83974890261687
-    },
-    {
-        "name": "Block-4",
-        "category": "Academic",
-        "lat": 9.620449086153675,
-        "lng": 41.839623416297556
-    },
-    {
-        "name": "Block-5",
-        "category": "Academic",
-        "lat": 9.620783237130075,
-        "lng": 41.839723847556364
-    },
-    {
-        "name": "Block-6",
-        "category": "Academic",
-        "lat": 9.621291846852762,
-        "lng": 41.840160769365305
-    },
-    {
-        "name": "Block-7",
-        "category": "Academic",
-        "lat": 9.621556132533211,
-        "lng": 41.840365219057105
-    },
-    {
-        "name": "Block-32 Main Library",
-        "category": "Library",
-        "lat": 9.621282888012514,
-        "lng": 41.840696881890466
-    },
-    {
-        "name": "Block-37 College of Business and Economics",
-        "category": "Academic",
-        "lat": 9.620830466271249,
-        "lng": 41.84048788887219
-    },
-    {
-        "name": "Block-36 institution of technology",
-        "category": "Academic",
-        "lat": 9.620839425123496,
-        "lng": 41.84085135499093
-    },
-    {
-        "name": "Block-35",
-        "category": "Academic",
-        "lat": 9.620843904549522,
-        "lng": 41.84116030119187
-    },
-    {
-        "name": "Block-33 School of Natural Science",
-        "category": "Academic",
-        "lat": 9.62156156041216,
-        "lng": 41.84112471211558
-    },
-    {
-        "name": "Block-34 School of social Science",
-        "category": "Academic",
-        "lat": 9.621265932838574,
-        "lng": 41.84115520485908
-    },
-    {
-        "name": "Block-27 (School of Post Graduates)",
-        "category": "Academic",
-        "lat": 9.622237995456304,
-        "lng": 41.840758799178836
-    },
-    {
-        "name": "Block-26 (College of Medicine and Health Science)",
-        "category": "Academic",
-        "lat": 9.62223298483145,
-        "lng": 41.840164190672354
-    },
-    {
-        "name": "Block-25",
-        "category": "Academic",
-        "lat": 9.622172857327433,
-        "lng": 41.83970679951352
-    },
-    {
-        "name": "Block-28",
-        "category": "Academic",
-        "lat": 9.622578515093936,
-        "lng": 41.84070296434256
-    },
-    {
-        "name": "Block-29",
-        "category": "Academic",
-        "lat": 9.622482737191158,
-        "lng": 41.84017922774839
-    },
-    {
-        "name": "Block-30",
-        "category": "Academic",
-        "lat": 9.62248690144835,
-        "lng": 41.83968928061192
-    },
-    {
-        "name": "Mermersa Gate",
-        "category": "Gate",
-        "lat": 9.619735945875444,
-        "lng": 41.83706653686665
-    },
-    {
-        "name": "Bewanaw Gate",
-        "category": "Gate",
-        "lat": 9.616001236964811,
-        "lng": 41.837581656766844
-    },
-    {
-        "name": "Toni Gate",
-        "category": "Gate",
-        "lat": 9.616253371528778,
-        "lng": 41.840807942194346
-    },
-    {
-        "name": "Twins-R",
-        "category": "Dormitory",
-        "lat": 9.619707720161303,
-        "lng": 41.8415222338388
-    },
-    {
-        "name": "Twins-Q",
-        "category": "Dormitory",
-        "lat": 9.619237437883957,
-        "lng": 41.84147046758551
-    },
-    {
-        "name": "Twins-P",
-        "category": "Dormitory",
-        "lat": 9.618978600072342,
-        "lng": 41.841965944581375
-    },
-    {
-        "name": "Twins-M",
-        "category": "Dormitory",
-        "lat": 9.619273893897846,
-        "lng": 41.84247621193533
-    },
-    {
-        "name": "Twins-L",
-        "category": "Dormitory",
-        "lat": 9.619642099417685,
-        "lng": 41.84246881675628
-    },
-    {
-        "name": "Twins-H",
-        "category": "Dormitory",
-        "lat": 9.619977494195627,
-        "lng": 41.84246881675628
-    },
-    {
         "name": "Wings-1",
         "category": "Dormitory",
         "lat": 9.61831874501878,
@@ -600,63 +642,15 @@
         "lng": 41.84174778677648
     },
     {
-        "name": "dormitory office",
-        "category": "office",
-        "lat": 9.620265495972788,
-        "lng": 41.84201031565739
-    },
-    {
-        "name": "Hayat-B",
-        "category": "Dormitory",
-        "lat": 9.619988430981408,
-        "lng": 41.841984432530744
-    },
-    {
-        "name": "Hayat-C",
-        "category": "Dormitory",
-        "lat": 9.619689492183372,
-        "lng": 41.841969642172664
-    },
-    {
-        "name": "Block-8",
-        "category": "Academic",
-        "lat": 9.621854347589757,
-        "lng": 41.840059606262734
-    },
-    {
-        "name": "post office",
-        "category": "Service",
-        "lat": 9.621525482178704,
-        "lng": 41.841218855632405
-    },
-    {
-        "name": "peace forum",
-        "category": "Service",
-        "lat": 9.620756900401048,
-        "lng": 41.83964612652903
-    },
-    {
-        "name": "student police",
-        "category": "Service",
-        "lat": 9.619904553206892,
-        "lng": 41.83953018344427
-    },
-    {
         "name": "ምዕራብ MKC (fellowship)",
         "category": "Religious",
-        "lat": 9.619904553206892,
-        "lng": 41.83953018344427
+        "lat": 9.60871924041884,
+        "lng": 41.84060736077966
     },
     {
         "name": "ሥላሴ ቤተ ክርስቲያን (ጊቢ ጉባኤ)",
         "category": "Religious",
         "lat": 9.612776226356333,
         "lng": 41.837574127205244
-    },
-    {
-        "name": "Hayat-D",
-        "category": "Dormitory",
-        "lat": 9.619427009118343,
-        "lng": 41.84194745663554
     }
 ]
