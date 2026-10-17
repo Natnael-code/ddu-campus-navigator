@@ -236,8 +236,8 @@
     {
         "name": "White House-F",
         "category": "Dormitory",
-        "lat": 9.621050,
-        "lng": 41.842890
+        "lat": 9.621473492119971,
+        "lng": 41.84243827754619
     },
     {
         "name": "White House-G",
@@ -314,8 +314,8 @@
     {
         "name": "Twins-F",
         "category": "Dormitory",
-        "lat": 9.621470508833648,
-        "lng": 41.84242738180533
+        "lat": 9.62050148779897,
+        "lng": 41.8414992219128
     },
     {
         "name": "Twins-G",
