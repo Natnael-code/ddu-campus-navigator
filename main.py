@@ -141,6 +141,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def no_cache_for_app_files(request: Request, call_next):
+    """Make Telegram / phone browsers re-check the page, scripts, styles and data on every open,
+    so an update you deploy shows up immediately instead of an old cached copy."""
+    response = await call_next(request)
+    path = request.url.path
+    if path in ("/", "/index.html", "/api/locations") or path.startswith(("/js/", "/css/")):
+        response.headers["Cache-Control"] = "no-cache, must-revalidate"
+    return response
+
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "backend", "data", "locations.json")
 FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
@@ -159,7 +171,6 @@ def get_locations():
 
 
 @app.get("/health")
-@app.head("/health")
 def health_check():
     return {"status": "ok"}
 
