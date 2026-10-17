@@ -73,7 +73,7 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
 // Girls dorms: Twins P,Q,R,S,M,L,H  and  Hayat B,C,D  (every other dorm = men's dorm)
 const GIRLS_DORMS = {
     twins: 'pqrsmlh',
-    hayat: 'bcd',
+    hayat: 'bca',
     wings: '1'
 };
 
@@ -682,7 +682,7 @@ function applyFollowHeading() {
     // Priority: GPS heading while walking > phone compass > route direction
     const h = gpsHeading != null ? gpsHeading
         : compassHeading != null ? compassHeading
-        : routeBearing(here);
+            : routeBearing(here);
     if (h == null) return;
 
     smoothedHeading = smoothedHeading == null
